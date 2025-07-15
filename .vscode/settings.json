@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "stdexcept": "cpp",
+        "filesystem": "cpp",
+        "vector": "cpp",
+        "utility": "cpp",
+        "xutility": "cpp",
+        "cstdlib": "cpp",
+        "cmath": "cpp",
+        "tuple": "cpp",
+        "format": "cpp"
+    }
+}
