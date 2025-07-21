@@ -7,4 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(slae)
 
-add_subdirectory(wind_induced_currents/davies85)
+add_subdirectory(wind_induced_currents/davies85/constant_parameters)
+add_subdirectory(wind_induced_currents/davies85/variable_parameters)
+add_subdirectory(wind_induced_currents/davies85/non_periodic_bc)

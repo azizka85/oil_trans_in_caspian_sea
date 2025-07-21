@@ -1,12 +1,10 @@
 #include <iostream>
 
 #include "solver.h"
-#include "variable_step_size/solver.h"
-#include "variable_step_size/variable_depth/solver.h"
 
 using namespace std;
 
-using namespace WindInducedCurrents::Davies85;
+using namespace WindInducedCurrents::Davies85::ConstantParameters;
 
 int main() {
     const double f = 1.2e-4;
@@ -32,13 +30,10 @@ int main() {
     const double outputTimeStep = 600;
 
     const string dir = "data";
-    // const string dir = "data/variable_step_size";
-    // const string dir = "data/variable_step_size/variable_depth";
+
 
     try {
         Solver solver(f, b, h, w, l, g, rho, nu, kb, qx, qy, dx, dy, dz, endTime, outputTimeStep, dir);
-        // VariableStepSize::Solver solver(f, b, h, w, l, g, rho, nu, kb, qx, qy, dx, dy, dz, endTime, outputTimeStep, dir);
-        // VariableStepSize::VariableDepth::Solver solver(f, b, h, w, l, g, rho, nu, kb, qx, qy, dx, dy, dz, endTime, outputTimeStep, dir);
 
         solver.solve();
     } catch (const exception& e) {

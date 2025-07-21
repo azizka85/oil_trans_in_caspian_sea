@@ -1,5 +1,5 @@
-#ifndef WIND_INDUCED_CURRENTS_DAVIES85_SOLVER_H
-#define WIND_INDUCED_CURRENTS_DAVIES85_SOLVER_H
+#ifndef WIND_INDUCED_CURRENTS_DAVIES85_CONSTANT_PARAMETERS_SOLVER_H
+#define WIND_INDUCED_CURRENTS_DAVIES85_CONSTANT_PARAMETERS_SOLVER_H
 
 #include <tuple>
 #include <string>
@@ -11,7 +11,7 @@ using namespace std;
 
 using namespace std::filesystem;
 
-namespace WindInducedCurrents::Davies85 {
+namespace WindInducedCurrents::Davies85::ConstantParameters {
     class Solver {
         private:
             double f;
@@ -48,7 +48,7 @@ namespace WindInducedCurrents::Davies85 {
                 vector<vector<double>>& z
             );                   
             
-            void calculate_residual_elements(
+            void calculateResidualElements(
                 double dt, int nx, int ny, int nz,    
                 vector<vector<double>>& ua,
                 vector<vector<double>>& u1a,
