@@ -8,6 +8,13 @@
         "cstdlib": "cpp",
         "cmath": "cpp",
         "tuple": "cpp",
-        "format": "cpp"
+        "format": "cpp",
+        "chrono": "cpp",
+        "forward_list": "cpp",
+        "initializer_list": "cpp",
+        "xiosbase": "cpp",
+        "xstring": "cpp",
+        "iosfwd": "cpp",
+        "fstream": "cpp"
     }
 }

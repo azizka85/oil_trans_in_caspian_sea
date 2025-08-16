@@ -7,11 +7,15 @@
 #include <fstream>
 #include <iostream>
 
+#include <chrono>
+
 #include <stdexcept>
 
 #include <slae/direct/tridiagonal.h>
 
 #include "solver.h"
+
+using namespace std::chrono;
 
 using namespace SLAE::Direct;
 
@@ -1124,7 +1128,7 @@ void Solver::writeData(
     writeViscosity(t, m, nx, ny, nz + 1, outDir);
 }
 
-void Solver::writeStatistics(vector<tuple<int, double, double, double, double>> &statistics, path outDir) {    
+void Solver::writeStatistics(vector<tuple<int, double, long long, double, double, double>> &statistics, path outDir) {    
     auto filePath = outDir / path("convergence.csv");
 
     ofstream file(filePath);
@@ -1135,16 +1139,17 @@ void Solver::writeStatistics(vector<tuple<int, double, double, double, double>> 
         );
     }
 
-    file << "n,  t,  u,  v,  z" << endl;
+    file << "n,  t, calc_time,  u,  v,  z" << endl;
 
     for (auto t: statistics) {
         file << format(
-            "{},  {:.3f},  {:.5f},  {:.5f},  {:.5f}", 
+            "{},  {:.3f}, {},  {:.5f},  {:.5f},  {:.5f}", 
             get<0>(t),
             get<1>(t),
             get<2>(t),
             get<3>(t),
-            get<4>(t)
+            get<4>(t),
+            get<5>(t)
         ) << endl;
     }
 }
@@ -1212,7 +1217,7 @@ void Solver::solve() {
     int n = 1;
     int m = 0;
 
-    vector<tuple<int, double, double, double, double>> statistics;
+    vector<tuple<int, double, long long, double, double, double>> statistics;
 
     writeHeights(nx, ny, outDir);
     writeData(t, m, nx, ny, nz, ua, va, z, uf, vf, outDir);
@@ -1222,6 +1227,10 @@ void Solver::solve() {
     vector<double> al(nz);
     vector<double> ac(nz);
     vector<double> ar(nz); 
+
+    auto start = high_resolution_clock::now();    
+
+    long long calcTime = 0;    
 
     while (t <= endTime) {
         for (int j = 0; j < ny; j++) {
@@ -1272,15 +1281,24 @@ void Solver::solve() {
         }
 
         if (t >= tn) {
+            auto end = high_resolution_clock::now();
+
+            auto duration = duration_cast<seconds>(end - start).count();
+            
+            calcTime += duration;
+
             writeData(t, m, nx, ny, nz, ua, va, z, uf, vf, outDir);
 
             auto umd = maxAbsDifference(nx, ny, nz, up, uf);
             auto vmd = maxAbsDifference(nx, ny, nz, vp, vf);
             auto zmd = maxAbsDifference(nx, ny, zp, z);
 
-            cout << format("Write data in file t={:.3f}, convergence of u={:.5f}, v={:.5f}, z={:.7f} with dt={:.5}", t, umd, vmd, zmd, dt) << endl;
+            cout << format(
+                "Write data in file t={:.3f}, convergence of u={:.5f}, v={:.5f}, z={:.7f} with dt={:.5}, calc time={}", 
+                t, umd, vmd, zmd, dt, calcTime
+            ) << endl;
 
-            statistics.push_back({n, tn, umd, vmd, zmd});
+            statistics.push_back({n, tn, calcTime, umd, vmd, zmd});
 
             updateData(nx, ny, zp, z);
             updateData(nx, ny, nz, up, uf);
@@ -1288,6 +1306,8 @@ void Solver::solve() {
 
             m += 1;
             tn = t + outputTimeStep;
+
+            start = high_resolution_clock::now();
         }
 
         updateData(nx, ny, ua, u1a);

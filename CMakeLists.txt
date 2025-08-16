@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 project(oil_trans_in_caspian_sea LANGUAGES CXX)
 
+find_package(OpenCL CONFIG REQUIRED)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -10,3 +12,4 @@ add_subdirectory(slae)
 add_subdirectory(wind_induced_currents/davies85/constant_parameters)
 add_subdirectory(wind_induced_currents/davies85/variable_parameters)
 add_subdirectory(wind_induced_currents/davies85/non_periodic_bc)
+add_subdirectory(wind_induced_currents/davies85/parallel/variable_parameters)

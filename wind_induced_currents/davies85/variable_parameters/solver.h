@@ -253,7 +253,7 @@ namespace WindInducedCurrents::Davies85::VariableParameters {
             );
 
             void writeStatistics(
-                vector<tuple<int, double, double, double, double>>& statistics, 
+                vector<tuple<int, double, long long, double, double, double>>& statistics, 
                 path outDir
             );
 
