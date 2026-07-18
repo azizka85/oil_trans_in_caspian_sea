@@ -83,3 +83,7 @@ CMakeLists.txt.user*
 
 # ParaView
 .sessions
+
+# Environment
+.vscode
+.vs

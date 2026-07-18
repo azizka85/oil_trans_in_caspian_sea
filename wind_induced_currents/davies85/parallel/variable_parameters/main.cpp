@@ -30,8 +30,8 @@ int main() {
     const float dx = 13;
     const float dy = 13;
 
-    const float dzm = 0.1;
-    const GenerateDZ dzg = GenerateDZ::ParabolicDZ;
+    const float dzm = 0.002;
+    const GenerateDZ dzg = GenerateDZ::UniformDZ;
 
     const float endTime = 60000;
     const float outputTimeStep = 600;

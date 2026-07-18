@@ -1300,6 +1300,8 @@ void Solver::solve() {
 
             statistics.push_back({n, tn, calcTime, umd, vmd, zmd});
 
+
+            
             updateData(nx, ny, zp, z);
             updateData(nx, ny, nz, up, uf);
             updateData(nx, ny, nz, vp, vf);

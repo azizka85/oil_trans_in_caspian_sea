@@ -13,3 +13,8 @@ add_subdirectory(wind_induced_currents/davies85/constant_parameters)
 add_subdirectory(wind_induced_currents/davies85/variable_parameters)
 add_subdirectory(wind_induced_currents/davies85/non_periodic_bc)
 add_subdirectory(wind_induced_currents/davies85/parallel/variable_parameters)
+
+add_subdirectory(diffusion/eulerian/1d)
+add_subdirectory(diffusion/eulerian/2d)
+
+add_subdirectory(diffusion/lagrangian/1d)
