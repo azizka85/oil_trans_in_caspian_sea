@@ -26,7 +26,7 @@ Solver::Solver(
     double hm, GenerateH hg,
     double w, double l,
     double g, double rho, double kb,
-    double num, GenerateNU nug,
+    double num, double nub, double hp, GenerateNU nug,
     double qxm, double qym, GenerateQ qg,
     double dx, double dy,
     double dzm, GenerateDZ dzg,
@@ -46,6 +46,8 @@ Solver::Solver(
     setKB(kb);
 
     setNUM(num);
+	setNUB(nub);
+	setHP(hp);
     setNUG(nug);
     
     setQXM(qxm);
@@ -193,6 +195,34 @@ void Solver::setNUM(double val) {
     }
 
     num = val;
+}
+
+double Solver::getNUB() {
+    return nub;
+}
+
+void Solver::setNUB(double val) {
+    if (val <= 0) {
+        throw runtime_error(
+            format("NUB should be > 0, but it is {}", val)
+        );
+    }
+
+    nub = val;
+}
+
+double Solver::getHP() {
+    return hp;
+}
+
+void Solver::setHP(double val) {
+    if (val <= 0) {
+        throw runtime_error(
+            format("HP should be > 0, but it is {}", val)
+        );
+    }
+
+    hp = val;
 }
 
 GenerateNU Solver::getNUG() {
@@ -395,6 +425,9 @@ void Solver::generateNU(
         case GenerateNU::FromWindSpeedNU:
             generateNUFromWindSpeed(nx, ny, nz);
             break;
+        case GenerateNU::LinearNU:
+            generateLinearNU(nx, ny, nz);
+			break;
     }
 }
 
@@ -413,6 +446,9 @@ void Solver::updateNU(
         case GenerateNU::FromWindSpeedNU:
             updateNUFromWindSpeed(nx, ny, nz);
             break;
+        case GenerateNU::LinearNU:
+            updateLinearNU(nx, ny, nz);
+			break;
     }
 }
 
@@ -451,6 +487,56 @@ void Solver::generateNUFromWindSpeed(int nx, int ny, int nz) {
 
 void Solver::updateNUFromWindSpeed(int nx, int ny, int nz) {
     updateUniformNU(nx, ny, nz);
+}
+
+void Solver::generateLinearNU(int nx, int ny, int nz) {
+    nu = vector<vector<vector<double>>>(
+        nx,
+        vector<vector<double>>(
+            ny,
+            vector<double>(nz)
+        )
+    );
+
+    for (int i = 0; i < nx; i++) {
+        for (int j = 0; j < ny; j++) {
+			double z = 0;
+
+            for (int k = 0; k < nz; k++) {
+                if (z < hp) {
+                    nu[i][j][k] = num - (num - nub) * z / hp;
+                }
+                else {
+					nu[i][j][k] = nub;
+                }
+
+                if (k < nz - 1) {
+                    z += h[i][j] * dz[k];
+				}
+            }
+        }
+    }
+}
+
+void Solver::updateLinearNU(int nx, int ny, int nz) {
+    for (int i = 0; i < nx; i++) {
+        for (int j = 0; j < ny; j++) {
+            double z = 0;
+
+            for (int k = 0; k < nz; k++) {
+                if (z < hp) {
+                    nu[i][j][k] = num - (num - nub) * z / hp;
+                }
+                else {
+                    nu[i][j][k] = nub;
+                }
+
+                if (k < nz - 1) {
+                    z += h[i][j] * dz[k];
+                }
+            }
+        }
+    }
 }
 
 double Solver::maxNU(int nx, int ny, int nz) {
@@ -661,6 +747,11 @@ path Solver::createDirectory() {
     }
 
     auto nuStr = format("UNU, nu={}", num);    
+
+    if (nug == GenerateNU::LinearNU) {
+        nuStr = format("LNU, nus={}, num={}, hp={}", num, nub, hp);
+	}
+
     auto qStr = format("UQ, qx={}, qy={}", qxm, qym);
     
     auto dzStr = format("UDZ, dz={}", dzm);
@@ -670,7 +761,7 @@ path Solver::createDirectory() {
     }
 
     auto dirPath = path(
-        format("{}/f={}, g={}, rho={}, kb={}/{}/{}/{}/dx={}, dy={}/{}", dir, f, g, rho, kb, hStr, nuStr, qStr, dx, dy, dzStr)
+        format("{}/{}/{}/{}/dx={}, dy={}/{}", dir, hStr, nuStr, qStr, dx, dy, dzStr)
     );
 
     create_directories(dirPath);    

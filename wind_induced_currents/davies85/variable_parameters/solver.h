@@ -19,7 +19,8 @@ namespace WindInducedCurrents::Davies85::VariableParameters {
 
     enum GenerateNU {
         UniformNU = 0,
-        FromWindSpeedNU = 1
+        FromWindSpeedNU = 1,
+		LinearNU = 2
     };
 
     enum GenerateQ {
@@ -49,6 +50,8 @@ namespace WindInducedCurrents::Davies85::VariableParameters {
             double kb;
 
             double num;
+            double nub;
+            double hp;
             GenerateNU nug;
             vector<vector<vector<double>>> nu;
 
@@ -99,6 +102,9 @@ namespace WindInducedCurrents::Davies85::VariableParameters {
 
             void generateNUFromWindSpeed(int nx, int ny, int nz);
             void updateNUFromWindSpeed(int nx, int ny, int nz);
+
+            void generateLinearNU(int nx, int ny, int nz);
+            void updateLinearNU(int nx, int ny, int nz);
 
             double maxNU(int nx, int ny, int nz);
 
@@ -263,7 +269,7 @@ namespace WindInducedCurrents::Davies85::VariableParameters {
                 double hm, GenerateH hg,
                 double w, double l,
                 double g, double rho, double kb, 
-                double num, GenerateNU nug,
+                double num, double nub, double hp, GenerateNU nug,
                 double qxm, double qym, GenerateQ qg,
                 double dx, double dy, 
                 double dzm, GenerateDZ dzg,
@@ -301,6 +307,12 @@ namespace WindInducedCurrents::Davies85::VariableParameters {
 
             double getNUM();
             void setNUM(double val);
+
+            double getNUB();
+            void setNUB(double val);
+
+            double getHP();
+            void setHP(double val);
 
             GenerateNU getNUG();
             void setNUG(GenerateNU val);

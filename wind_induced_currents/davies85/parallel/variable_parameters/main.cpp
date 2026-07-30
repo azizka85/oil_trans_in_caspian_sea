@@ -15,6 +15,8 @@ int main() {
     const float kb = 0.002;
 
     const float num = 0.4;
+    const float nub = 0.005;
+	const float hp = 100;
     const GenerateNU nug = GenerateNU::UniformNU;
 
     const float hm = 260;
@@ -39,7 +41,7 @@ int main() {
     const string dir = "data";
 
     try {
-        Solver solver(f, b, hm, hg, w, l, g, rho, kb, num, nug, qxm, qym, qg, dx, dy, dzm, dzg, endTime, outputTimeStep, dir);
+        Solver solver(f, b, hm, hg, w, l, g, rho, kb, num, nub, hp, nug, qxm, qym, qg, dx, dy, dzm, dzg, endTime, outputTimeStep, dir);
 
         solver.solve();
     } catch (const exception& e) {

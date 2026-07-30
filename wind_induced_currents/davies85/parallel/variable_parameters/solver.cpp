@@ -23,7 +23,7 @@ Solver::Solver(
     float hm, GenerateH hg,
     float w, float l,
     float g, float rho, float kb,
-    float num, GenerateNU nug,
+    float num, float nub, float hp, GenerateNU nug,
     float qxm, float qym, GenerateQ qg,
     float dx, float dy,
     float dzm, GenerateDZ dzg,
@@ -43,6 +43,8 @@ Solver::Solver(
     setKB(kb);
 
     setNUM(num);
+	setNUB(nub);
+    setHP(hp);
     setNUG(nug);
     
     setQXM(qxm);
@@ -190,6 +192,34 @@ void Solver::setNUM(float val) {
     }
 
     num = val;
+}
+
+float Solver::getNUB() {
+    return nub;
+}
+
+void Solver::setNUB(float val) {
+    if (val <= 0) {
+        throw runtime_error(
+            format("NUB should be > 0, but it is {}", val)
+        );
+    }
+
+    nub = val;
+}
+
+float Solver::getHP() {
+    return hp;
+}
+
+void Solver::setHP(float val) {
+    if (val < 0) {
+        throw runtime_error(
+            format("HP should be >= 0, but it is {}", val)
+        );
+    }
+
+    hp = val;
 }
 
 GenerateNU Solver::getNUG() {
@@ -398,11 +428,13 @@ void Solver::generateNU(
         case GenerateNU::FromWindSpeedNU:
             generateNUFromWindSpeed(nx, ny, nz);
             break;
+        case GenerateNU::LinearNU:
+            generateLinearNU(nx, ny, nz);
+			break;
     }
 }
 
-void Solver::generateUniformNU(int nx, int ny, int nz)
-{
+void Solver::generateUniformNU(int nx, int ny, int nz) {
     nu = vector<float>(nx*ny*nz);
 
     for (int i = 0; i < nx; i++) {
@@ -422,6 +454,33 @@ void Solver::generateNUFromWindSpeed(int nx, int ny, int nz) {
     generateUniformNU(nx, ny, nz);
 }
 
+void Solver::generateLinearNU(int nx, int ny, int nz) {
+    nu = vector<float>(nx * ny * nz);
+
+    for (int i = 0; i < nx; i++) {
+        for (int j = 0; j < ny; j++) {
+            int p = j + i * ny;
+
+            float z = 0;
+
+            for (int k = 0; k < nz; k++) {
+                int id = k + p * nz;
+
+                if (z < hp) {
+                    nu[id] = num - (num - nub) * z / hp;
+                }
+                else {
+                    nu[id] = nub;
+                }
+
+                if (k < nz - 1) {
+                    z += h[p] * dz[k];
+                }
+            }
+        }
+    }
+}
+
 cl::Kernel Solver::createUpdateNUKernel(
     int ny, int nz, 
     cl::Buffer& bufferNU,
@@ -432,6 +491,8 @@ cl::Kernel Solver::createUpdateNUKernel(
             return createUpdateUniformNUKernel(ny, nz, bufferNU, program);
         case GenerateNU::FromWindSpeedNU:
             return createUpdateNUFromWindSpeed(ny, nz, bufferNU, program);
+		case GenerateNU::LinearNU:
+			return createUpdateLinearNUKernel(program);
     }
 }
 
@@ -448,6 +509,12 @@ cl::Kernel Solver::createUpdateUniformNUKernel(int ny, int nz, cl::Buffer& buffe
 
 cl::Kernel Solver::createUpdateNUFromWindSpeed(int ny, int nz, cl::Buffer& bufferNU, cl::Program& program) {
     return createUpdateUniformNUKernel(ny, nz, bufferNU, program);
+}
+
+cl::Kernel Solver::createUpdateLinearNUKernel(cl::Program& program) {
+    cl::Kernel kernel(program, "wind_induced_currents_davies85_variable_parameters_update_linear_nu");
+
+    return kernel;
 }
 
 float Solver::maxNU(int nx, int ny, int nz)
@@ -587,7 +654,7 @@ void Solver::generateParabolicDZ() {
     float z = 0;
     float dzf = calcParabolicDZFactor(z);
 
-    dz.push_back(dzm*dzf);    
+    dz.push_back(dzm * dzf);
 
     while (z < 1) {
         z += dzm * dzf;
@@ -614,7 +681,7 @@ void Solver::generateParabolicDZ() {
         }
 
         dzf = calcParabolicDZFactor(z);
-        dz.push_back(dzm*dzf);
+        dz.push_back(dzm * dzf);
     }
 }
 
@@ -629,7 +696,12 @@ path Solver::createDirectory() {
         hStr = format("CH, h={}", hm);
     }
 
-    auto nuStr = format("UNU, nu={}", num);    
+    auto nuStr = format("UNU, nu={}", num); 
+
+    if (nug == GenerateNU::LinearNU) {
+		nuStr = format("LNU, nus={}, num={}, hp={}", num, nub, hp);
+    }
+
     auto qStr = format("UQ, qx={}, qy={}", qxm, qym);
     
     auto dzStr = format("UDZ, dz={}", dzm);
@@ -640,7 +712,7 @@ path Solver::createDirectory() {
 
     auto dirPath = path(
         format("{}/f={}, g={}, rho={}, kb={}/{}/{}/{}/dx={}, dy={}/{}", dir, f, g, rho, kb, hStr, nuStr, qStr, dx, dy, dzStr)
-    );
+    );    
 
     create_directories(dirPath);    
 
@@ -1364,8 +1436,8 @@ void Solver::solve() {
     calcMaxKernel.setArg(1, bufferR);
     calcMaxKernel.setArg(2, bufferV);
 
-    cl::Kernel updateNUKernel = createUpdateNUKernel(ny, nz, bufferNU, program);
-    cl::Kernel updateQKernel = createUpdateQKernel(qxm, ny, bufferQX, program);
+    // cl::Kernel updateNUKernel = createUpdateNUKernel(ny, nz, bufferNU, program);
+    // cl::Kernel updateQKernel = createUpdateQKernel(qxm, ny, bufferQX, program);
 
     cl::NDRange valueRange(1);
     cl::NDRange rowRange(nx);
@@ -1407,7 +1479,7 @@ void Solver::solve() {
         t += dt;
         n += 1;
 
-        updateQKernel.setArg(0, qxm);
+        /* updateQKernel.setArg(0, qxm);
         updateQKernel.setArg(2, bufferQX);
 
         err = queue.enqueueNDRangeKernel(updateQKernel, cl::NullRange, surfaceRange, cl::NullRange);
@@ -1417,7 +1489,7 @@ void Solver::solve() {
 
         err = queue.enqueueNDRangeKernel(updateQKernel, cl::NullRange, surfaceRange, cl::NullRange);
 
-        err = queue.enqueueNDRangeKernel(updateNUKernel, cl::NullRange, nuRange, cl::NullRange);        
+        err = queue.enqueueNDRangeKernel(updateNUKernel, cl::NullRange, nuRange, cl::NullRange); */       
 
         err = queue.enqueueNDRangeKernel(calcMaxPlaneKernel, cl::NullRange, surfaceRange, cl::NullRange);
         err = queue.enqueueNDRangeKernel(calcMaxRowKernel, cl::NullRange, rowRange, cl::NullRange);

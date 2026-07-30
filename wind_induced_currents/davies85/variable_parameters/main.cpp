@@ -15,10 +15,12 @@ int main() {
     const double kb = 0.002;
 
     const double num = 0.4;
-    const GenerateNU nug = GenerateNU::UniformNU;
+	const double nub = 0.005;
+    const float hp = 100;
+    const GenerateNU nug = GenerateNU::LinearNU;
 
     const double hm = 260;
-    const GenerateH hg = GenerateH::UniformH;
+    const GenerateH hg = GenerateH::CosineH;
 
     const double w = 260;
     const double l = 260;
@@ -39,7 +41,7 @@ int main() {
     const string dir = "data";
 
     try {
-        Solver solver(f, b, hm, hg, w, l, g, rho, kb, num, nug, qxm, qym, qg, dx, dy, dzm, dzg, endTime, outputTimeStep, dir);
+        Solver solver(f, b, hm, hg, w, l, g, rho, kb, num, nub, hp, nug, qxm, qym, qg, dx, dy, dzm, dzg, endTime, outputTimeStep, dir);
 
         solver.solve();
     } catch (const exception& e) {

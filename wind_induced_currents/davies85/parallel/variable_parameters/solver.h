@@ -21,7 +21,8 @@ namespace WindInducedCurrents::Davies85::Parallel::VariableParameters {
 
     enum GenerateNU {
         UniformNU = 0,
-        FromWindSpeedNU = 1
+        FromWindSpeedNU = 1,
+		LinearNU = 2
     };
 
     enum GenerateQ {
@@ -51,6 +52,8 @@ namespace WindInducedCurrents::Davies85::Parallel::VariableParameters {
             float kb;
 
             float num;
+			float nub;
+			float hp;
             GenerateNU nug;
             vector<float> nu;
 
@@ -88,6 +91,7 @@ namespace WindInducedCurrents::Davies85::Parallel::VariableParameters {
 
             void generateUniformNU(int nx, int ny, int nz);
             void generateNUFromWindSpeed(int nx, int ny, int nz);
+			void generateLinearNU(int nx, int ny, int nz);
 
             cl::Kernel createUpdateNUKernel(                
                 int ny, int nz,
@@ -106,6 +110,8 @@ namespace WindInducedCurrents::Davies85::Parallel::VariableParameters {
                 cl::Buffer& bufferNU,
                 cl::Program& program
             );
+
+            cl::Kernel createUpdateLinearNUKernel(cl::Program& program);
 
             float maxNU(int nx, int ny, int nz);
 
@@ -232,7 +238,7 @@ namespace WindInducedCurrents::Davies85::Parallel::VariableParameters {
                 float hm, GenerateH hg,
                 float w, float l,
                 float g, float rho, float kb, 
-                float num, GenerateNU nug,
+                float num, float nub, float hp, GenerateNU nug,
                 float qxm, float qym, GenerateQ qg,
                 float dx, float dy, 
                 float dzm, GenerateDZ dzg,
@@ -270,6 +276,12 @@ namespace WindInducedCurrents::Davies85::Parallel::VariableParameters {
 
             float getNUM();
             void setNUM(float val);
+
+			float getNUB();
+			void setNUB(float val);
+
+			float getHP();
+			void setHP(float val);
 
             GenerateNU getNUG();
             void setNUG(GenerateNU val);
