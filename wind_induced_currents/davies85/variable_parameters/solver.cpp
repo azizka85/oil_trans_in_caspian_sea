@@ -761,7 +761,7 @@ path Solver::createDirectory() {
     }
 
     auto dirPath = path(
-        format("{}/{}/{}/{}/dx={}, dy={}/{}", dir, hStr, nuStr, qStr, dx, dy, dzStr)
+        format("{}/f={}, g={}, rho={}, kb={}/{}/{}/{}/dx={}, dy={}/{}", dir, f, g, rho, kb, hStr, nuStr, qStr, dx, dy, dzStr)
     );
 
     create_directories(dirPath);    

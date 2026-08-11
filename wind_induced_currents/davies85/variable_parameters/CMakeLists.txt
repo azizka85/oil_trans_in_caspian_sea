@@ -9,6 +9,8 @@ add_executable(wind_induced_currents_davies_85_variable_parameters main.cpp
     solver.cpp
 )
 
+target_add_manifest(wind_induced_currents_davies_85_variable_parameters)
+
 target_link_libraries(wind_induced_currents_davies_85_variable_parameters PRIVATE
     slae
 )

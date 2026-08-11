@@ -9,6 +9,8 @@ add_executable(wind_induced_currents_davies_85_non_periodic_bc main.cpp
     solver.cpp
 )
 
+target_add_manifest(wind_induced_currents_davies_85_non_periodic_bc)
+
 target_link_libraries(wind_induced_currents_davies_85_non_periodic_bc PRIVATE
     slae
 )
