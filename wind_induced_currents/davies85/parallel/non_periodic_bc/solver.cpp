@@ -655,6 +655,14 @@ void Solver::solve() {
 
         err = queue.enqueueNDRangeKernel(updateUVFKernel, cl::NullRange, surfaceRange, cl::NullRange);
 
+        swap(bufferU1A, bufferUA);
+        swap(bufferV1A, bufferVA);
+
+        updateZKernel.setArg(6, bufferUA);
+        updateZKernel.setArg(7, bufferVA);
+
+        queue.enqueueNDRangeKernel(updateZKernel, cl::NullRange, surfaceRange, cl::NullRange);
+
         t += dt;
         n += 1;     
 
@@ -672,10 +680,7 @@ void Solver::solve() {
         }
         else {
             dt = Utils::Calc::adjustTimeStep(b, t, dt, outputTimeStep, dtMax, true);
-        }
-
-        swap(bufferU1A, bufferUA);
-        swap(bufferV1A, bufferVA);
+        }        
 
         if (currentWindIndex < windData.size() - 1 && t >= windData[currentWindIndex + 1].time) {
             currentWindIndex += 1;
@@ -735,12 +740,7 @@ void Solver::solve() {
             tn = t + outputTimeStep;
 
             start = high_resolution_clock::now();
-        }        
-
-        updateZKernel.setArg(6, bufferUA);
-        updateZKernel.setArg(7, bufferVA);
-
-        queue.enqueueNDRangeKernel(updateZKernel, cl::NullRange, surfaceRange, cl::NullRange);
+        }                
     }
 
     queue.finish();

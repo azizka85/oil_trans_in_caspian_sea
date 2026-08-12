@@ -28,6 +28,7 @@ add_executable(wind_induced_currents_davies_85_parallel_non_periodic_bc
 
     generators/viscosity/uniform_generator.cpp
     generators/viscosity/wind_speed_generator.cpp
+    generators/viscosity/linear_generator.cpp
 )
 
 target_copy_opencl(wind_induced_currents_davies_85_parallel_non_periodic_bc)

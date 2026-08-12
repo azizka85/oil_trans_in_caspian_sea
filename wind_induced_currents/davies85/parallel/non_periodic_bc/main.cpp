@@ -6,11 +6,11 @@
 
 #include <stdexcept>
 
-#include "generators/area/proj_generator.h"
+#include "generators/area/uniform_generator.h"
 #include "generators/dz/triple_point_generator.h"
-#include "generators/bathymetry/gebco_generator.h"
-#include "generators/wind/ecmwf_generator.h"
-#include "generators/viscosity/wind_speed_generator.h"
+#include "generators/bathymetry/uniform_generator.h"
+#include "generators/wind/uniform_generator.h"
+#include "generators/viscosity/uniform_generator.h"
 
 #include "solver.h"
 
@@ -43,15 +43,18 @@ int main() {
 	double refDepth = -25;
 	double minDepth = 1;
 
-	const float dx = 5000;
-	const float dy = 5000;
+	const float dx = 13;
+	const float dy = 13;
 
 	const float dzMin = 0.002;
 	const float dzMax = 0.1;
 
 	const float zm = 0.51;
 
+	const float ht = 100;
+
 	const float num = 0.4;
+	const float nut = 0.005;
 	const float nu0 = 1.15e-6;
 
 	const float w = 260;
@@ -74,24 +77,14 @@ int main() {
 	const string outDir = "out";
 
 	try {
-		auto areaGenerator = make_unique<Area::ProjGenerator>(latMin, latMax, lonMin, lonMax);
+		auto areaGenerator = make_unique<Area::UniformGenerator>(w, l);
 		auto dzGenerator = make_unique<DZ::TriplePointGenerator>(dzMin, dzMax, zm);
 
-		auto hGenerator = make_unique<Bathymetry::GEBCOGenerator>(
-			latMin, latMax, 
-			lonMin, lonMax, 
-			refDepth, minDepth, 
-			gebcoFilePath
-		);
+		auto hGenerator = make_unique<Bathymetry::UniformGenerator>(hm);
 
-		auto qGenerator = make_unique<Wind::ECMWFGenerator>(
-			latMin, latMax, 
-			lonMin, lonMax, 
-			rhoAir, Cd, 
-			ecmwfFilePath
-		);
+		auto qGenerator = make_unique<Wind::UniformGenerator>(u10m, v10m, qxm, qym);
 
-		auto nuGenerator = make_unique<Viscosity::WindSpeedGenerator>(k0, k, f, sigma, rho, nu0);
+		auto nuGenerator = make_unique<Viscosity::UniformGenerator>(num);
 
 		Solver solver(
 			b, f, g, rho, kb, 			

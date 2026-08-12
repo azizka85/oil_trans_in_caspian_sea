@@ -105,6 +105,8 @@ vector<float> TriplePointGenerator::generateDZ() {
         vdz = calcDZ(z);
         dz.push_back(vdz);
     }
+
+    return dz;
 }
 
 float TriplePointGenerator::calcDZ(float z) {
