@@ -388,11 +388,14 @@ void Solver::solve() {
         );
     }
 
+    int currentWindIndex = 0;
+    Generators::Wind::Data currentWindData = windData[currentWindIndex];    
+
     vector<float> nu = nuGenerator->generateNU(
         nx, ny, nz + 1,
         dz, h,
-        windData[0].u10, windData[0].v10,
-        windData[0].qx, windData[0].qy,
+        currentWindData.u10, currentWindData.v10,
+        currentWindData.qx, currentWindData.qy,
         ua, va
     );
 
@@ -421,12 +424,10 @@ void Solver::solve() {
     Writers::Height::write(h, nx, ny, dx, dy, dirs.root);
 
     writeData(
-        t, m, 
-        nx, ny, nz, 
+        t, m, nx, ny, nz, 
         dz, h, z, 
-        ua, va, 
-        uf, vf, 
-        windData[0].qx, windData[0].qy,
+        ua, va, uf, vf, 
+        currentWindData.qx, currentWindData.qy,
         nu, dirs
     );
 
@@ -487,8 +488,8 @@ void Solver::solve() {
     err = queue.enqueueWriteBuffer(bufferDZ, CL_TRUE, 0, sizeof(float) * nz, dz.data());
 
     err = queue.enqueueWriteBuffer(bufferH, CL_TRUE, 0, sizeof(float) * nx * ny, h.data());
-    err = queue.enqueueWriteBuffer(bufferQX, CL_TRUE, 0, sizeof(float) * nx * ny, qx.data());
-    err = queue.enqueueWriteBuffer(bufferQY, CL_TRUE, 0, sizeof(float) * nx * ny, qy.data());
+    err = queue.enqueueWriteBuffer(bufferQX, CL_TRUE, 0, sizeof(float) * nx * ny, currentWindData.qx.data());
+    err = queue.enqueueWriteBuffer(bufferQY, CL_TRUE, 0, sizeof(float) * nx * ny, currentWindData.qy.data());
     err = queue.enqueueWriteBuffer(bufferZ, CL_TRUE, 0, sizeof(float) * nx * ny, z.data());
 
     err = queue.enqueueWriteBuffer(bufferUA, CL_TRUE, 0, sizeof(float) * nx * ny, ua.data());
@@ -673,6 +674,26 @@ void Solver::solve() {
             dt = Utils::Calc::adjustTimeStep(b, t, dt, outputTimeStep, dtMax, true);
         }
 
+        swap(bufferU1A, bufferUA);
+        swap(bufferV1A, bufferVA);
+
+        if (currentWindIndex < windData.size() - 1 && t >= windData[currentWindIndex + 1].time) {
+            currentWindIndex += 1;
+            currentWindData = windData[currentWindIndex];
+
+            err = queue.enqueueReadBuffer(bufferUA, CL_TRUE, 0, sizeof(float) * nx * ny, ua.data());
+            err = queue.enqueueReadBuffer(bufferVA, CL_TRUE, 0, sizeof(float) * nx * ny, va.data());
+
+            nu = nuGenerator->generateNU(
+                nx, ny, nz + 1, dz, h, 
+                currentWindData.u10, currentWindData.v10,
+                currentWindData.qx, currentWindData.qy,
+                ua, va
+            );
+
+            err = queue.enqueueWriteBuffer(bufferNU, CL_TRUE, 0, sizeof(float) * nx * ny * (nz + 1), nu.data());
+        }
+
         if (t >= tn) {
             auto end = high_resolution_clock::now();
 
@@ -684,15 +705,16 @@ void Solver::solve() {
             err = queue.enqueueReadBuffer(bufferVA, CL_TRUE, 0, sizeof(float) * nx * ny, va.data());
             err = queue.enqueueReadBuffer(bufferZ, CL_TRUE, 0, sizeof(float) * nx * ny, z.data());
 
-            err = queue.enqueueReadBuffer(bufferQX, CL_TRUE, 0, sizeof(float) * nx * ny, qx.data());
-            err = queue.enqueueReadBuffer(bufferQY, CL_TRUE, 0, sizeof(float) * nx * ny, qy.data());
-
             err = queue.enqueueReadBuffer(bufferUF, CL_TRUE, 0, sizeof(float) * nx * ny * nz, uf.data());
             err = queue.enqueueReadBuffer(bufferVF, CL_TRUE, 0, sizeof(float) * nx * ny * nz, vf.data());
 
-            err = queue.enqueueReadBuffer(bufferNU, CL_TRUE, 0, sizeof(float) * nx * ny * (nz + 1), nu.data());
-
-            writeData(t, m, nx, ny, nz, dz, h, z, ua, va, uf, vf, qx, qy, nu, dirs);
+            writeData(
+                t, m, nx, ny, nz, 
+                dz, h, z, 
+                ua, va, uf, vf, 
+                currentWindData.qx, currentWindData.qy, 
+                nu, dirs
+            );
 
             auto umd = Utils::Calc::maxAbsDifference(nx, ny, nz, up, uf);
             auto vmd = Utils::Calc::maxAbsDifference(nx, ny, nz, vp, vf);
@@ -713,10 +735,7 @@ void Solver::solve() {
             tn = t + outputTimeStep;
 
             start = high_resolution_clock::now();
-        }
-
-        swap(bufferU1A, bufferUA);
-        swap(bufferV1A, bufferVA);
+        }        
 
         updateZKernel.setArg(6, bufferUA);
         updateZKernel.setArg(7, bufferVA);
