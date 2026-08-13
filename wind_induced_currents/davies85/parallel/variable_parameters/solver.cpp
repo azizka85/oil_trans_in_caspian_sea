@@ -1103,19 +1103,13 @@ void Solver::writeViscosity(
                 float x = dx * i;
                 float y = dy * j;
 
-                float dzc = dz[nz-2];
-
-                if (k < nz-1) {
-                    dzc = dz[k];
-                }
-
-                int p = j + i*ny;
-
-                z[i][j] += h[p]*dzc / 2;
-                
                 file << format("{:.3f} {:.3f} {:.3f}", x, y, z[i][j]) << endl;
 
-                z[i][j] += h[p]*dzc / 2;
+                int p = j + i * ny;
+
+                if (k < nz-1) {
+                    z[i][j] += h[p] * dz[k];
+                }                     
             }
         }        
     }

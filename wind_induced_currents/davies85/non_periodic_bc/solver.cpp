@@ -1077,17 +1077,11 @@ void Solver::writeViscosity(
                 double x = dx * i;
                 double y = dy * j;
 
-                double dzc = dz[nz-2];
-
-                if (k < nz-1) {
-                    dzc = dz[k];
-                }
-
-                z[i][j] += h[i][j]*dzc / 2;
-                
                 file << format("{:.3f} {:.3f} {:.3f}", x, y, z[i][j]) << endl;
 
-                z[i][j] += h[i][j]*dzc / 2;
+                if (k < nz-1) {
+                    z[i][j] += h[i][j] * dz[k];
+                }                
             }
         }        
     }
