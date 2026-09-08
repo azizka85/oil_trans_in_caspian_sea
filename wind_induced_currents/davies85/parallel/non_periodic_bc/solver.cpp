@@ -455,6 +455,12 @@ void Solver::solve() {
 
     auto err = program.build(device);
 
+    if (err == -11) {
+        auto build_log = program.getBuildInfo<CL_PROGRAM_BUILD_LOG>();
+
+        bool ok = true;
+    }
+
     cl::Buffer bufferV(context, CL_MEM_READ_WRITE, sizeof(float));
     cl::Buffer bufferR(context, CL_MEM_READ_WRITE, sizeof(float) * nx);
     cl::Buffer bufferP(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
@@ -579,13 +585,14 @@ void Solver::solve() {
 
     updateUVFKernel.setArg(0, ny);
     updateUVFKernel.setArg(1, nz);
-    updateUVFKernel.setArg(2, bufferAL);
-    updateUVFKernel.setArg(3, bufferAC);
-    updateUVFKernel.setArg(4, bufferAR);
-    updateUVFKernel.setArg(5, bufferUF);
-    updateUVFKernel.setArg(6, bufferVF);
-    updateUVFKernel.setArg(7, bufferUD);
-    updateUVFKernel.setArg(8, bufferVD);
+    updateUVFKernel.setArg(2, bufferH);
+    updateUVFKernel.setArg(3, bufferAL);
+    updateUVFKernel.setArg(4, bufferAC);
+    updateUVFKernel.setArg(5, bufferAR);
+    updateUVFKernel.setArg(6, bufferUF);
+    updateUVFKernel.setArg(7, bufferVF);
+    updateUVFKernel.setArg(8, bufferUD);
+    updateUVFKernel.setArg(9, bufferVD);
 
     cl::Kernel updateZKernel(program, "wind_induced_currents_davies85_variable_parameters_calc_z");
 

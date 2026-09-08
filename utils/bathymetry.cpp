@@ -10,8 +10,10 @@ tuple<float, float> Bathymetry::minMaxH(vector<float>& h, int nx, int ny) {
         for (int j = 0; j < ny; j++) {
             int id = j + i * ny;
 
-            minH = min(minH, h[id]);
-            maxH = max(maxH, h[id]);
+            if (h[id] > 0) {
+                minH = min(minH, h[id]);
+                maxH = max(maxH, h[id]);
+            }
         }
     }
 

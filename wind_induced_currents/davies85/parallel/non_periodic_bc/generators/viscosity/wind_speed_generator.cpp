@@ -145,7 +145,7 @@ vector<float> WindSpeedGenerator::generateNU(
             float vv10 = v10[p];
             
             float nut = k * (vua * vua + vva * vva) / sigma + nu0;
-            float nus = 0.1825e-4 * pow(vu10 * vu10 + vv10 * vv10, 1.25) + nu0;
+            float nus = 0.1825e-3 * pow(vu10 * vu10 + vv10 * vv10, 1.25) + nu0;
 
             float z = 0;
 
