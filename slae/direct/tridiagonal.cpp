@@ -13,7 +13,7 @@ void calc(int n, const vector<double> &l, const vector<double> &c, const vector<
 
         for (int i = 1; i < n; i++) {
             auto c1 = c[i] - l[i]*u[i-1];
-    
+
             u[i] = r[i] / c1;
             d[i] = (d[i] - l[i]*d[i-1]) / c1;
         }
@@ -27,10 +27,10 @@ void calc(int n, const vector<double> &l, const vector<double> &c, const vector<
 }
 
 void calc(
-    int n, 
-    const double l, const double l1, 
-    const double c, const double c0, const double c1, 
-    const double r, const double r0, 
+    int n,
+    const double l, const double l1,
+    const double c, const double c0, const double c1,
+    const double r, const double r0,
     vector<double> &d, vector<double> &u
 ) {
     if (n > 0) {
@@ -44,10 +44,10 @@ void calc(
                 u[i] = r / ct;
                 d[i] = (d[i] - l * d[i-1]) / ct;
             }
-            
+
             auto ct = c1 - l1 * u[n-2];
 
-            d[n-1] = (d[n-1] - l1 * d[n-2]) / ct;            
+            d[n-1] = (d[n-1] - l1 * d[n-2]) / ct;
         }
 
         u[n-1] = d[n-1];
@@ -65,14 +65,14 @@ void Tridiagonal::solve(const vector<double> &l, const vector<double> &c, const 
 }
 
 void SLAE::Direct::Tridiagonal::solve(
-    const double l, const double l1, 
-    const double c, const double c0, const double c1, 
-    const double r, const double r0, 
+    const double l, const double l1,
+    const double c, const double c0, const double c1,
+    const double r, const double r0,
     vector<double> &d, vector<double> &u
 ) {
     int n = d.size();
 
-    check(n, u);    
+    check(n, u);
     calc(n, l, l1, c, c0, c1, r, r0, d, u);
 }
 
@@ -95,7 +95,7 @@ int Tridiagonal::check(const vector<double> &l, const vector<double> &c, const v
         throw runtime_error(
             format("The lengths of the d and c should be equal, but now the length of the d is {} and c is {}", d.size(), n)
         );
-    }    
+    }
 
     check(n, u);
 
