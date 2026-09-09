@@ -6,9 +6,9 @@
 
 #include <stdexcept>
 
-#include "generators/area/uniform_generator.h"
+#include "generators/area/proj_generator.h"
 #include "generators/dz/triple_point_generator.h"
-#include "generators/bathymetry/uniform_generator.h"
+#include "generators/bathymetry/gebco_generator.h"
 #include "generators/wind/uniform_generator.h"
 #include "generators/viscosity/uniform_generator.h"
 
@@ -43,8 +43,8 @@ int main() {
 	double refDepth = -25;
 	double minDepth = 1;
 
-	const float dx = 13;
-	const float dy = 13;
+	const float dx = 13000;
+	const float dy = 13000;
 
 	const float dzMin = 0.002;
 	const float dzMax = 0.1;
@@ -77,10 +77,10 @@ int main() {
 	const string outDir = "out";
 
 	try {
-		auto areaGenerator = make_unique<Area::UniformGenerator>(w, l);
+		auto areaGenerator = make_unique<Area::ProjGenerator>(latMin, latMax, lonMin, lonMax);
 		auto dzGenerator = make_unique<DZ::TriplePointGenerator>(dzMin, dzMax, zm);
 
-		auto hGenerator = make_unique<Bathymetry::UniformGenerator>(hm);
+		auto hGenerator = make_unique<Bathymetry::GEBCOGenerator>(latMin, latMax, lonMin, lonMax, refDepth, minDepth, gebcoFilePath);
 
 		auto qGenerator = make_unique<Wind::UniformGenerator>(u10m, v10m, qxm, qym);
 

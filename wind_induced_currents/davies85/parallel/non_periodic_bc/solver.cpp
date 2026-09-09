@@ -709,7 +709,7 @@ void Solver::solve() {
         if (t >= tn) {
             auto end = high_resolution_clock::now();
 
-            auto duration = duration_cast<seconds>(end - start).count();
+            auto duration = duration_cast<milliseconds>(end - start).count();
 
             calcTime += duration;
 
@@ -734,10 +734,10 @@ void Solver::solve() {
 
             cout << format(
                 "Write data in file t={:.3f}, convergence of u={:.5f}, v={:.5f}, z={:.7f} with dt={:.5}, calc time={}",
-                t, umd, vmd, zmd, dt, calcTime
+                t, umd, vmd, zmd, dt, calcTime / 1000
             ) << endl;
 
-            statistics.push_back({ n, tn, calcTime, umd, vmd, zmd });
+            statistics.push_back({ n, tn, calcTime / 1000, umd, vmd, zmd });
 
             Utils::Calc::updateData(nx, ny, zp, z);
             Utils::Calc::updateData(nx, ny, nz, up, uf);

@@ -170,6 +170,8 @@ vector<float> GEBCOGenerator::generateH(int nx, int ny) {
 
     vector<float> depths(nx * ny);
 
+    double epsilon = 0.003;
+
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
             int p = j + i * ny;
@@ -181,8 +183,15 @@ vector<float> GEBCOGenerator::generateH(int nx, int ny) {
             PJ_COORD geo = proj_trans(transformer.get(), PJ_INV, coord);
 
             if (
-                geo.lp.lam >= lats.front() && geo.lp.lam <= lats.back() &&
-                geo.lp.phi >= lons.front() && geo.lp.phi <= lons.back()
+                geo.lp.phi >= 55.9964 - epsilon && geo.lp.phi <= 55.9964 + epsilon && 
+                geo.lp.lam >= 46.0642 - epsilon && geo.lp.lam <= 46.0642 + epsilon
+            ) {
+                bool ok = true;
+            }
+
+            if (
+                geo.lp.lam >= lats.front() + epsilon && geo.lp.lam <= lats.back() - epsilon &&
+                geo.lp.phi >= lons.front() + epsilon && geo.lp.phi <= lons.back() - epsilon
             ) {
                 float elevation = interpFunc(geo.lp.phi, geo.lp.lam);
 

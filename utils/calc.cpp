@@ -16,7 +16,14 @@ float Calc::adjustTimeStep(float b, float t, float dt, float tMax, float dtMax, 
     }
 
     if (mult) {
-        return b * dt;
+        float dtp = b * dt;
+
+        if (dtp > dtMax) {
+            return dtMax;
+        }
+        else {
+            return dtp;
+        }
     }
 
     return dt;
