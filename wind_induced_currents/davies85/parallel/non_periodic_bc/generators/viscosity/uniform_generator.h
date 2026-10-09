@@ -6,22 +6,22 @@
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Viscosity {
 	class UniformGenerator : public IGenerator {
 		private:
-			float num;
+			double num;
 
 		public:
-			UniformGenerator(float num);
+			UniformGenerator(double num);
 
-			float getNUM();
-			void setNUM(float val);
+			double getNUM();
+			void setNUM(double val);
 
 			path createDirectory(path outDir) override;
 
-			vector<float> generateNU(
+			vector<double> generateNU(
 				int nx, int ny, int nz,
-				vector<float>& dz, vector<float>& h,
-				vector<float>& u10, vector<float>& v10,
-				vector<float>& qx, vector<float>& qy,
-				vector<float>& ua, vector<float>& va
+				vector<double>& dz, vector<double>& h,
+				vector<double>& u10, vector<double>& v10,
+				vector<double>& qx, vector<double>& qy,
+				vector<double>& ua, vector<double>& va
 			) override;
 	};
 }

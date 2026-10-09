@@ -6,25 +6,25 @@
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::DZ {
 	class TriplePointGenerator : public IGenerator {
 		private:
-			float dzMax;
-			float dzMin;
-			float zm;
+			double dzMax;
+			double dzMin;
+			double zm;
 
 		public:
-			TriplePointGenerator(float dzMin, float dzMax, float zm);
+			TriplePointGenerator(double dzMin, double dzMax, double zm);
 
-			float getDZMin();
-			float getDZMax();
-			void setDZMinMax(float dzMin, float dzMax);
+			double getDZMin();
+			double getDZMax();
+			void setDZMinMax(double dzMin, double dzMax);
 
-			float getZM();
-			void setZM(float val);
+			double getZM();
+			void setZM(double val);
 
 			path createDirectory(path outDir) override;
 
-			vector<float> generateDZ() override;
+			vector<double> generateDZ() override;
 
-			float calcDZ(float z);
+			double calcDZ(double z);
 	};
 }
 

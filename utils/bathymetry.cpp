@@ -2,9 +2,9 @@
 
 using namespace Utils;
 
-tuple<float, float> Bathymetry::minMaxH(vector<float>& h, int nx, int ny) {
-    float minH = 1000000;
-    float maxH = h[0];
+tuple<double, double> Bathymetry::minMaxH(vector<double>& h, int nx, int ny) {
+    double minH = 1000000;
+    double maxH = h[0];
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {

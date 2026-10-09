@@ -19,15 +19,15 @@ using namespace std::chrono;
 using namespace WindInducedCurrents::Davies85::Parallel::VariableParameters;
 
 Solver::Solver(
-    float f, float b,
-    float hm, GenerateH hg,
-    float w, float l,
-    float g, float rho, float kb,
-    float num, float nub, float hp, GenerateNU nug,
-    float qxm, float qym, GenerateQ qg,
-    float dx, float dy,
-    float dzm, GenerateDZ dzg,
-    float endTime, float outputTimeStep, string dir)
+    double f, double b,
+    double hm, GenerateH hg,
+    double w, double l,
+    double g, double rho, double kb,
+    double num, double nub, double hp, GenerateNU nug,
+    double qxm, double qym, GenerateQ qg,
+    double dx, double dy,
+    double dzm, GenerateDZ dzg,
+    double endTime, double outputTimeStep, string dir)
 {
     setF(f);
     setB(b);
@@ -62,19 +62,19 @@ Solver::Solver(
     setDir(dir);
 }
 
-float Solver::getF() {
+double Solver::getF() {
     return f;
 }
 
-void Solver::setF(float val) {
+void Solver::setF(double val) {
     f = val;
 }
 
-float Solver::getB() {
+double Solver::getB() {
     return b;
 }
 
-void Solver::setB(float val) {
+void Solver::setB(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("B should be > 0, but it is {}", val)
@@ -84,11 +84,11 @@ void Solver::setB(float val) {
     b = val;
 }
 
-float Solver::getHM() {
+double Solver::getHM() {
     return hm;
 }
 
-void Solver::setHM(float val) {
+void Solver::setHM(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("HM should be > 0, but it is {}", val)
@@ -106,15 +106,15 @@ void Solver::setHG(GenerateH val) {
     hg = val;
 }
 
-vector<float> Solver::getH() {
+vector<double> Solver::getH() {
     return h;
 }
 
-float Solver::getW() {
+double Solver::getW() {
     return w;
 }
 
-void Solver::setW(float val) {
+void Solver::setW(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("W should be > 0, but it is {}", val)
@@ -124,11 +124,11 @@ void Solver::setW(float val) {
     w = val;
 }
 
-float Solver::getL() {
+double Solver::getL() {
     return l;
 }
 
-void Solver::setL(float val) {
+void Solver::setL(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("L should be > 0, but it is {}", val)
@@ -138,11 +138,11 @@ void Solver::setL(float val) {
     l = val;
 }
 
-float Solver::getG() {
+double Solver::getG() {
     return g;
 }
 
-void Solver::setG(float val) {
+void Solver::setG(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("G should be > 0, but it is {}", val)
@@ -152,11 +152,11 @@ void Solver::setG(float val) {
     g = val;
 }
 
-float Solver::getRHO() {
+double Solver::getRHO() {
     return rho;
 }
 
-void Solver::setRHO(float val) {
+void Solver::setRHO(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("RHO should be > 0, but it is {}", val)
@@ -166,11 +166,11 @@ void Solver::setRHO(float val) {
     rho = val;
 }
 
-float Solver::getKB() {
+double Solver::getKB() {
     return kb;
 }
 
-void Solver::setKB(float val) {
+void Solver::setKB(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("KB should be > 0, but it is {}", val)
@@ -180,11 +180,11 @@ void Solver::setKB(float val) {
     kb = val;
 }
 
-float Solver::getNUM() {
+double Solver::getNUM() {
     return num;
 }
 
-void Solver::setNUM(float val) {
+void Solver::setNUM(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("NUM should be > 0, but it is {}", val)
@@ -194,11 +194,11 @@ void Solver::setNUM(float val) {
     num = val;
 }
 
-float Solver::getNUB() {
+double Solver::getNUB() {
     return nub;
 }
 
-void Solver::setNUB(float val) {
+void Solver::setNUB(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("NUB should be > 0, but it is {}", val)
@@ -208,11 +208,11 @@ void Solver::setNUB(float val) {
     nub = val;
 }
 
-float Solver::getHP() {
+double Solver::getHP() {
     return hp;
 }
 
-void Solver::setHP(float val) {
+void Solver::setHP(double val) {
     if (val < 0) {
         throw runtime_error(
             format("HP should be >= 0, but it is {}", val)
@@ -230,23 +230,23 @@ void Solver::setNUG(GenerateNU val) {
     nug = val;
 }
 
-vector<float> Solver::getNU() {
+vector<double> Solver::getNU() {
     return nu;
 }
 
-float Solver::getQXM() {
+double Solver::getQXM() {
     return qxm;
 }
 
-void Solver::setQXM(float val) {
+void Solver::setQXM(double val) {
     qxm = val;
 }
 
-float Solver::getQYM() {
+double Solver::getQYM() {
     return qym;
 }
 
-void Solver::setQYM(float val) {
+void Solver::setQYM(double val) {
     qym = val;
 }
 
@@ -258,19 +258,19 @@ void Solver::setQG(GenerateQ val) {
     qg = val;
 }
 
-vector<float> Solver::getQX() {
+vector<double> Solver::getQX() {
     return qx;
 }
 
-vector<float> Solver::getQY() {
+vector<double> Solver::getQY() {
     return qy;
 }
 
-float Solver::getDX() {
+double Solver::getDX() {
     return dx;
 }
 
-void Solver::setDX(float val) {
+void Solver::setDX(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("DX should be > 0, but it is {}", val)
@@ -280,11 +280,11 @@ void Solver::setDX(float val) {
     dx = val;
 }
 
-float Solver::getDY() {
+double Solver::getDY() {
     return dy;
 }
 
-void Solver::setDY(float val) {
+void Solver::setDY(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("DY should be > 0, but it is {}", val)
@@ -294,11 +294,11 @@ void Solver::setDY(float val) {
     dy = val;
 }
 
-float Solver::getDZM() {
+double Solver::getDZM() {
     return dzm;
 }
 
-void Solver::setDZM(float val) {
+void Solver::setDZM(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("DZM should be > 0, but it is {}", val)
@@ -316,15 +316,15 @@ void Solver::setDZG(GenerateDZ val) {
     dzg = val;
 }
 
-vector<float> Solver::getDZ() {
+vector<double> Solver::getDZ() {
     return dz;
 }
 
-float Solver::getEndTime() {
+double Solver::getEndTime() {
     return endTime;
 }
 
-void Solver::setEndTime(float val) {
+void Solver::setEndTime(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("endTime should be > 0, but it is {}", val)
@@ -334,11 +334,11 @@ void Solver::setEndTime(float val) {
     endTime = val;
 }
 
-float Solver::getOutputTimeStep() {
+double Solver::getOutputTimeStep() {
     return outputTimeStep;
 }
 
-void Solver::setOutputTimeStep(float val) {
+void Solver::setOutputTimeStep(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("outputTimeStep should be > 0, but it is {}", val)
@@ -374,7 +374,7 @@ void Solver::generateH(int nx, int ny) {
 }
 
 void Solver::generateUniformH(int nx, int ny) {
-    h = vector<float>(nx*ny);
+    h = vector<double>(nx*ny);
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -386,7 +386,7 @@ void Solver::generateUniformH(int nx, int ny) {
 }
 
 void Solver::generateCosineH(int nx, int ny) {
-    h = vector<float>(nx*ny);
+    h = vector<double>(nx*ny);
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -397,9 +397,9 @@ void Solver::generateCosineH(int nx, int ny) {
     }
 }
 
-tuple<float, float> Solver::minMaxH(int nx, int ny) {
-    float minH = h[0];
-    float maxH = h[0];
+tuple<double, double> Solver::minMaxH(int nx, int ny) {
+    double minH = h[0];
+    double maxH = h[0];
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -415,11 +415,11 @@ tuple<float, float> Solver::minMaxH(int nx, int ny) {
 
 void Solver::generateNU(
     int nx, int ny, int nz, 
-    vector<float> &ua, 
-    vector<float> &va, 
-    vector<float> &z, 
-    vector<float> &uf, 
-    vector<float> &vf
+    vector<double> &ua, 
+    vector<double> &va, 
+    vector<double> &z, 
+    vector<double> &uf, 
+    vector<double> &vf
 ) {
     switch(nug) {
         case GenerateNU::UniformNU:
@@ -435,7 +435,7 @@ void Solver::generateNU(
 }
 
 void Solver::generateUniformNU(int nx, int ny, int nz) {
-    nu = vector<float>(nx*ny*nz);
+    nu = vector<double>(nx*ny*nz);
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -455,13 +455,13 @@ void Solver::generateNUFromWindSpeed(int nx, int ny, int nz) {
 }
 
 void Solver::generateLinearNU(int nx, int ny, int nz) {
-    nu = vector<float>(nx * ny * nz);
+    nu = vector<double>(nx * ny * nz);
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
             int p = j + i * ny;
 
-            float z = 0;
+            double z = 0;
 
             for (int k = 0; k < nz; k++) {
                 int id = k + p * nz;
@@ -517,9 +517,9 @@ cl::Kernel Solver::createUpdateLinearNUKernel(cl::Program& program) {
     return kernel;
 }
 
-float Solver::maxNU(int nx, int ny, int nz)
+double Solver::maxNU(int nx, int ny, int nz)
 {
-    float nuMax = nu[0];
+    double nuMax = nu[0];
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -538,11 +538,11 @@ float Solver::maxNU(int nx, int ny, int nz)
 
 void Solver::generateQX(
     int nx, int ny, int nz, 
-    vector<float> &ua, 
-    vector<float> &va, 
-    vector<float> &z, 
-    vector<float> &uf, 
-    vector<float> &vf
+    vector<double> &ua, 
+    vector<double> &va, 
+    vector<double> &z, 
+    vector<double> &uf, 
+    vector<double> &vf
 ) {
     switch (qg) {
         case GenerateQ::UniformQ:
@@ -555,7 +555,7 @@ void Solver::generateQX(
 }
 
 void Solver::generateUniformQX(int nx, int ny) {
-    qx = vector<float>(nx*ny);
+    qx = vector<double>(nx*ny);
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -572,11 +572,11 @@ void Solver::generateQXFromWindSpeed(int nx, int ny) {
 
 void Solver::generateQY(
     int nx, int ny, int nz, 
-    vector<float> &ua, 
-    vector<float> &va, 
-    vector<float> &z, 
-    vector<float> &uf, 
-    vector<float> &vf
+    vector<double> &ua, 
+    vector<double> &va, 
+    vector<double> &z, 
+    vector<double> &uf, 
+    vector<double> &vf
 ) {
     switch (qg) {
         case GenerateQ::UniformQ:
@@ -589,7 +589,7 @@ void Solver::generateQY(
 }
 
 void Solver::generateUniformQY(int nx, int ny) {
-    qy = vector<float>(nx*ny);
+    qy = vector<double>(nx*ny);
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -604,7 +604,7 @@ void Solver::generateQYFromWindSpeed(int nx, int ny) {
     generateUniformQY(nx, ny);
 }
 
-cl::Kernel Solver::createUpdateQKernel(float qm, int ny, cl::Buffer &bufferQ, cl::Program& program) {
+cl::Kernel Solver::createUpdateQKernel(double qm, int ny, cl::Buffer &bufferQ, cl::Program& program) {
     switch(qg) {
         case GenerateQ::UniformQ:
             return createUpdateUniformQKernel(qm, ny, bufferQ, program);
@@ -613,7 +613,7 @@ cl::Kernel Solver::createUpdateQKernel(float qm, int ny, cl::Buffer &bufferQ, cl
     }
 }
 
-cl::Kernel Solver::createUpdateUniformQKernel(float qm, int ny, cl::Buffer &bufferQ, cl::Program &program) {
+cl::Kernel Solver::createUpdateUniformQKernel(double qm, int ny, cl::Buffer &bufferQ, cl::Program &program) {
     cl::Kernel kernel(program, "wind_induced_currents_davies85_variable_parameters_update_uniform_q");
 
     kernel.setArg(0, qm);
@@ -623,7 +623,7 @@ cl::Kernel Solver::createUpdateUniformQKernel(float qm, int ny, cl::Buffer &buff
     return kernel;
 }
 
-cl::Kernel Solver::createUpdateQFromWindSpeedKernel(float qm, int ny, cl::Buffer &bufferQ, cl::Program &program) {
+cl::Kernel Solver::createUpdateQFromWindSpeedKernel(double qm, int ny, cl::Buffer &bufferQ, cl::Program &program) {
     return createUpdateUniformQKernel(qm, ny, bufferQ, program);
 }
 
@@ -643,7 +643,7 @@ void Solver::generateUniformDZ() {
         ceil(1./dzm)
     );
 
-    dz = vector<float>(nz);
+    dz = vector<double>(nz);
 
     for (int k = 0; k < nz; k++) {
         dz[k] = dzm;
@@ -651,8 +651,8 @@ void Solver::generateUniformDZ() {
 }
 
 void Solver::generateParabolicDZ() {
-    float z = 0;
-    float dzf = calcParabolicDZFactor(z);
+    double z = 0;
+    double dzf = calcParabolicDZFactor(z);
 
     dz.push_back(dzm * dzf);
 
@@ -665,10 +665,10 @@ void Solver::generateParabolicDZ() {
 
                 int n = dz.size();
 
-                float dzd = 1 - z;
+                double dzd = 1 - z;
 
                 if (n > 1) {
-                    float dzp = dz[n-2];
+                    double dzp = dz[n-2];
 
                     dz[n-2] = (dzd + dzp) / 2;
                     dz[n-1] = (dzd + dzp) / 2;
@@ -685,7 +685,7 @@ void Solver::generateParabolicDZ() {
     }
 }
 
-float Solver::calcParabolicDZFactor(float z) {
+double Solver::calcParabolicDZFactor(double z) {
     return -2.96*z*z + 3.44*z + 0.02;
 }
 
@@ -778,11 +778,11 @@ void Solver::loadKernelSources(cl::Program::Sources &sources) {
 
 void Solver::setInitialCondition(
     int nx, int ny, int nz, 
-    vector<float>& uf, 
-    vector<float>& vf, 
-    vector<float>& ua,
-    vector<float>& va,
-    vector<float>& z
+    vector<double>& uf, 
+    vector<double>& vf, 
+    vector<double>& ua,
+    vector<double>& va,
+    vector<double>& z
 ) {
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -802,7 +802,7 @@ void Solver::setInitialCondition(
     }
 }
 
-float Solver::adjustTimeStep(float t, float dt, float tMax, float dtMax, bool mult) {
+double Solver::adjustTimeStep(double t, double dt, double tMax, double dtMax, bool mult) {
     if (dt >= dtMax) {
         return dtMax;
     }
@@ -818,8 +818,8 @@ float Solver::adjustTimeStep(float t, float dt, float tMax, float dtMax, bool mu
     return dt;
 }
 
-float Solver::maxAbsDifference(int nx, int ny, vector<float> &u, vector<float> &u1) {
-    float maxDiff = 0.;
+double Solver::maxAbsDifference(int nx, int ny, vector<double> &u, vector<double> &u1) {
+    double maxDiff = 0.;
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -835,8 +835,8 @@ float Solver::maxAbsDifference(int nx, int ny, vector<float> &u, vector<float> &
     return maxDiff;
 }
 
-float Solver::maxAbsDifference(int nx, int ny, int nz, vector<float> &u, vector<float> &u1) {
-    float maxDiff = 0.;
+double Solver::maxAbsDifference(int nx, int ny, int nz, vector<double> &u, vector<double> &u1) {
+    double maxDiff = 0.;
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -856,7 +856,7 @@ float Solver::maxAbsDifference(int nx, int ny, int nz, vector<float> &u, vector<
     return maxDiff;
 }
 
-void Solver::updateData(int nx, int ny, vector<float> &u, vector<float> &u1) {
+void Solver::updateData(int nx, int ny, vector<double> &u, vector<double> &u1) {
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
             int p = j + i*ny;
@@ -866,7 +866,7 @@ void Solver::updateData(int nx, int ny, vector<float> &u, vector<float> &u1) {
     }
 }
 
-void Solver::updateData(int nx, int ny, int nz, vector<float> &u, vector<float> &u1) {
+void Solver::updateData(int nx, int ny, int nz, vector<double> &u, vector<double> &u1) {
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
             int p = j + i*ny;
@@ -898,23 +898,23 @@ void Solver::writeHeights(int nx, int ny, path outDir) {
     file << "ASCII" << endl;
     file << "DATASET STRUCTURED_GRID" << endl;
     file << format("DIMENSIONS {} {} 1", nx, ny) << endl;    
-    file << format("POINTS {} float", nx*ny) << endl;
+    file << format("POINTS {} double", nx*ny) << endl;
 
     for (int j = 0; j < ny; j++) {
         for (int i = 0; i < nx; i++) {
-            float x = dx * i;
-            float y = dy * j;
+            double x = dx * i;
+            double y = dy * j;
 
             file << format("{:.3f} {:.3f} 0.0", x, y) << endl;
         }
     }
 
     file << "FIELD FieldData 1" << endl;
-    file << "Time 1 1 float" << endl;
+    file << "Time 1 1 double" << endl;
     file << format("{:.3f}", 0.) << endl;
     file << format("POINT_DATA {}", nx*ny) << endl;
 
-    file << "SCALARS h float" << endl;
+    file << "SCALARS h double" << endl;
     file << "LOOKUP_TABLE default" << endl;
 
     for (int j = 0; j < ny; j++) {
@@ -927,11 +927,11 @@ void Solver::writeHeights(int nx, int ny, path outDir) {
 }
 
 void Solver::writeSurfaceData(
-    float t, int m, 
+    double t, int m, 
     int nx, int ny, 
-    vector<float> &ua, 
-    vector<float> &va, 
-    vector<float> &z,
+    vector<double> &ua, 
+    vector<double> &va, 
+    vector<double> &z,
     path outDir
 ) {
     auto filePath = path(
@@ -953,23 +953,23 @@ void Solver::writeSurfaceData(
     file << "ASCII" << endl;
     file << "DATASET STRUCTURED_GRID" << endl;
     file << format("DIMENSIONS {} {} 1", nx, ny) << endl;    
-    file << format("POINTS {} float", nx*ny) << endl;
+    file << format("POINTS {} double", nx*ny) << endl;
 
     for (int j = 0; j < ny; j++) {
         for (int i = 0; i < nx; i++) {
-            float x = dx * i;
-            float y = dy * j;
+            double x = dx * i;
+            double y = dy * j;
 
             file << format("{:.3f} {:.3f} 0.0", x, y) << endl;
         }
     }
 
     file << "FIELD FieldData 1" << endl;
-    file << "Time 1 1 float" << endl;
+    file << "Time 1 1 double" << endl;
     file << format("{:.3f}", t) << endl;
     file << format("POINT_DATA {}", nx*ny) << endl;
 
-    file << "VECTORS VA float" << endl;
+    file << "VECTORS VA double" << endl;
 
     for (int j = 0; j < ny; j++) {
         for (int i = 0; i < nx; i++) {
@@ -979,7 +979,7 @@ void Solver::writeSurfaceData(
         }
     }
 
-    file << "VECTORS Q float" << endl;
+    file << "VECTORS Q double" << endl;
 
     for (int j = 0; j < ny; j++) {
         for (int i = 0; i < nx; i++) {
@@ -989,7 +989,7 @@ void Solver::writeSurfaceData(
         }
     }
 
-    file << "SCALARS z float" << endl;
+    file << "SCALARS z double" << endl;
     file << "LOOKUP_TABLE default" << endl;
 
     for (int j = 0; j < ny; j++) {
@@ -1002,12 +1002,12 @@ void Solver::writeSurfaceData(
 }
 
 void Solver::writeVolumeData(
-    float t, int m, 
+    double t, int m, 
     int nx, int ny, int nz, 
-    vector<float> &ua, 
-    vector<float> &va, 
-    vector<float> &uf, 
-    vector<float> &vf, 
+    vector<double> &ua, 
+    vector<double> &va, 
+    vector<double> &uf, 
+    vector<double> &vf, 
     path outDir
 ) {
     auto filePath = path(
@@ -1029,15 +1029,15 @@ void Solver::writeVolumeData(
     file << "ASCII" << endl;
     file << "DATASET STRUCTURED_GRID" << endl;
     file << format("DIMENSIONS {} {} {}", nx, ny, nz) << endl;    
-    file << format("POINTS {} float", nx*ny*nz) << endl;    
+    file << format("POINTS {} double", nx*ny*nz) << endl;    
 
-    vector<vector<float>> z(nx, vector<float>(ny, 0));
+    vector<vector<double>> z(nx, vector<double>(ny, 0));
 
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
             for (int i = 0; i < nx; i++) {
-                float x = dx * i;
-                float y = dy * j;
+                double x = dx * i;
+                double y = dy * j;
 
                 int p = j + i*ny;
 
@@ -1051,11 +1051,11 @@ void Solver::writeVolumeData(
     }
 
     file << "FIELD FieldData 1" << endl;
-    file << "Time 1 1 float" << endl;
+    file << "Time 1 1 double" << endl;
     file << format("{:.3f}", t) << endl;
     file << format("POINT_DATA {}", nx*ny*nz) << endl;
 
-    file << "VECTORS V float" << endl;
+    file << "VECTORS V double" << endl;
 
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
@@ -1070,7 +1070,7 @@ void Solver::writeVolumeData(
 }
 
 void Solver::writeViscosity(
-    float t, int m, 
+    double t, int m, 
     int nx, int ny, int nz, 
     path outDir
 ) {
@@ -1093,15 +1093,15 @@ void Solver::writeViscosity(
     file << "ASCII" << endl;
     file << "DATASET STRUCTURED_GRID" << endl;
     file << format("DIMENSIONS {} {} {}", nx, ny, nz) << endl;    
-    file << format("POINTS {} float", nx*ny*nz) << endl;    
+    file << format("POINTS {} double", nx*ny*nz) << endl;    
 
-    vector<vector<float>> z(nx, vector<float>(ny, 0));
+    vector<vector<double>> z(nx, vector<double>(ny, 0));
 
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
             for (int i = 0; i < nx; i++) {
-                float x = dx * i;
-                float y = dy * j;
+                double x = dx * i;
+                double y = dy * j;
 
                 file << format("{:.3f} {:.3f} {:.3f}", x, y, z[i][j]) << endl;
 
@@ -1115,11 +1115,11 @@ void Solver::writeViscosity(
     }
 
     file << "FIELD FieldData 1" << endl;
-    file << "Time 1 1 float" << endl;
+    file << "Time 1 1 double" << endl;
     file << format("{:.3f}", t) << endl;
     file << format("POINT_DATA {}", nx*ny*nz) << endl;
 
-    file << "SCALARS nu float" << endl;
+    file << "SCALARS nu double" << endl;
     file << "LOOKUP_TABLE default" << endl;
 
     for (int k = 0; k < nz; k++) {
@@ -1135,13 +1135,13 @@ void Solver::writeViscosity(
 }
 
 void Solver::writeData(
-    float t, int m, 
+    double t, int m, 
     int nx, int ny, int nz, 
-    vector<float> &ua, 
-    vector<float> &va, 
-    vector<float> &z,
-    vector<float> &uf, 
-    vector<float> &vf, 
+    vector<double> &ua, 
+    vector<double> &va, 
+    vector<double> &z,
+    vector<double> &uf, 
+    vector<double> &vf, 
     path outDir
 ) {
     writeSurfaceData(t, m, nx, ny, ua, va, z, outDir);
@@ -1149,7 +1149,7 @@ void Solver::writeData(
     writeViscosity(t, m, nx, ny, nz + 1, outDir);
 }
 
-void Solver::writeStatistics(vector<tuple<int, float, long long, float, float, float>> &statistics, path outDir) {    
+void Solver::writeStatistics(vector<tuple<int, double, long long, double, double, double>> &statistics, path outDir) {    
     auto filePath = outDir / path("convergence.csv");
 
     ofstream file(filePath);
@@ -1193,23 +1193,23 @@ void Solver::solve() {
     generateH(nx, ny);    
 
     auto [hMin, hMax] = minMaxH(nx, ny);
-    float dzMin = *min_element(dz.begin(), dz.end());
+    double dzMin = *min_element(dz.begin(), dz.end());
 
-    const float dtMax = min(dx, dy)/sqrt(2*g*hMax)/1.5;
+    const double dtMax = min(dx, dy)/sqrt(2*g*hMax)/1.5;
     
-    vector<float> ua(nx*ny);
-    vector<float> u1a(nx*ny);
+    vector<double> ua(nx*ny);
+    vector<double> u1a(nx*ny);
 
-    vector<float> va(nx*ny);
-    vector<float> v1a(nx*ny);
+    vector<double> va(nx*ny);
+    vector<double> v1a(nx*ny);
 
-    vector<float> z(nx*ny);
+    vector<double> z(nx*ny);
 
-    vector<float> uf(nx*ny*nz);
-    vector<float> ud(nx*ny*nz);
+    vector<double> uf(nx*ny*nz);
+    vector<double> ud(nx*ny*nz);
 
-    vector<float> vf(nx*ny*nz);
-    vector<float> vd(nx*ny*nz);
+    vector<double> vf(nx*ny*nz);
+    vector<double> vd(nx*ny*nz);
 
     setInitialCondition(nx, ny, nz, uf, vf, ua, va, z);    
     
@@ -1218,27 +1218,27 @@ void Solver::solve() {
 
     generateNU(nx, ny, nz + 1, ua, va, z, uf, vf);
 
-    float nuMax = maxNU(nx, ny, nz + 1);
+    double nuMax = maxNU(nx, ny, nz + 1);
 
-    float dt = min(dtMax, hMin*dzMin*hMin*dzMin/2/nuMax);
-    float dtp = dt;
+    double dt = min(dtMax, hMin*dzMin*hMin*dzMin/2/nuMax);
+    double dtp = dt;
 
-    vector<float> zp(nx*ny);
+    vector<double> zp(nx*ny);
 
-    vector<float> up(nx*ny*nz);
-    vector<float> vp(nx*ny*nz);
+    vector<double> up(nx*ny*nz);
+    vector<double> vp(nx*ny*nz);
 
     updateData(nx, ny, zp, z);
     updateData(nx, ny, nz, up, uf);
     updateData(nx, ny, nz, vp, vf);
 
-    float t = 0;
-    float tn = outputTimeStep;
+    double t = 0;
+    double tn = outputTimeStep;
 
     int n = 1;
     int m = 0;
 
-    vector<tuple<int, float, long long, float, float, float>> statistics;
+    vector<tuple<int, double, long long, double, double, double>> statistics;
 
     writeHeights(nx, ny, outDir);
     writeData(t, m, nx, ny, nz, ua, va, z, uf, vf, outDir);
@@ -1267,50 +1267,50 @@ void Solver::solve() {
 
     auto err = program.build(device);
 
-    cl::Buffer bufferV(context, CL_MEM_READ_WRITE, sizeof(float));
-    cl::Buffer bufferR(context, CL_MEM_READ_WRITE, sizeof(float) * nx);
-    cl::Buffer bufferP(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
+    cl::Buffer bufferV(context, CL_MEM_READ_WRITE, sizeof(double));
+    cl::Buffer bufferR(context, CL_MEM_READ_WRITE, sizeof(double) * nx);
+    cl::Buffer bufferP(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
 
-    cl::Buffer bufferDZ(context, CL_MEM_READ_WRITE, sizeof(float) * nz);
+    cl::Buffer bufferDZ(context, CL_MEM_READ_WRITE, sizeof(double) * nz);
 
-    cl::Buffer bufferH(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
-    cl::Buffer bufferQX(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
-    cl::Buffer bufferQY(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
-    cl::Buffer bufferZ(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
+    cl::Buffer bufferH(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
+    cl::Buffer bufferQX(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
+    cl::Buffer bufferQY(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
+    cl::Buffer bufferZ(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
 
-    cl::Buffer bufferUA(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
-    cl::Buffer bufferVA(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
-    cl::Buffer bufferU1A(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
-    cl::Buffer bufferV1A(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
+    cl::Buffer bufferUA(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
+    cl::Buffer bufferVA(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
+    cl::Buffer bufferU1A(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
+    cl::Buffer bufferV1A(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
 
-    cl::Buffer bufferNU(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * (nz + 1));
+    cl::Buffer bufferNU(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * (nz + 1));
 
-    cl::Buffer bufferUF(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
-    cl::Buffer bufferVF(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
+    cl::Buffer bufferUF(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
+    cl::Buffer bufferVF(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
 
-    cl::Buffer bufferUD(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
-    cl::Buffer bufferVD(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
+    cl::Buffer bufferUD(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
+    cl::Buffer bufferVD(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
 
-    cl::Buffer bufferAL(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
-    cl::Buffer bufferAC(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
-    cl::Buffer bufferAR(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
+    cl::Buffer bufferAL(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
+    cl::Buffer bufferAC(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
+    cl::Buffer bufferAR(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
 
     cl::CommandQueue queue(context, device);
 
-    err = queue.enqueueWriteBuffer(bufferDZ, CL_TRUE, 0, sizeof(float) * nz, dz.data());
+    err = queue.enqueueWriteBuffer(bufferDZ, CL_TRUE, 0, sizeof(double) * nz, dz.data());
 
-    err = queue.enqueueWriteBuffer(bufferH, CL_TRUE, 0, sizeof(float) * nx * ny, h.data());
-    err = queue.enqueueWriteBuffer(bufferQX, CL_TRUE, 0, sizeof(float) * nx * ny, qx.data());
-    err = queue.enqueueWriteBuffer(bufferQY, CL_TRUE, 0, sizeof(float) * nx * ny, qy.data());
-    err = queue.enqueueWriteBuffer(bufferZ, CL_TRUE, 0, sizeof(float) * nx * ny, z.data());
+    err = queue.enqueueWriteBuffer(bufferH, CL_TRUE, 0, sizeof(double) * nx * ny, h.data());
+    err = queue.enqueueWriteBuffer(bufferQX, CL_TRUE, 0, sizeof(double) * nx * ny, qx.data());
+    err = queue.enqueueWriteBuffer(bufferQY, CL_TRUE, 0, sizeof(double) * nx * ny, qy.data());
+    err = queue.enqueueWriteBuffer(bufferZ, CL_TRUE, 0, sizeof(double) * nx * ny, z.data());
 
-    err = queue.enqueueWriteBuffer(bufferUA, CL_TRUE, 0, sizeof(float) * nx * ny, ua.data());
-    err = queue.enqueueWriteBuffer(bufferVA, CL_TRUE, 0, sizeof(float) * nx * ny, va.data());
+    err = queue.enqueueWriteBuffer(bufferUA, CL_TRUE, 0, sizeof(double) * nx * ny, ua.data());
+    err = queue.enqueueWriteBuffer(bufferVA, CL_TRUE, 0, sizeof(double) * nx * ny, va.data());
 
-    err = queue.enqueueWriteBuffer(bufferNU, CL_TRUE, 0, sizeof(float) * nx * ny * (nz + 1), nu.data());
+    err = queue.enqueueWriteBuffer(bufferNU, CL_TRUE, 0, sizeof(double) * nx * ny * (nz + 1), nu.data());
 
-    err = queue.enqueueWriteBuffer(bufferUF, CL_TRUE, 0, sizeof(float) * nx * ny * nz, uf.data());
-    err = queue.enqueueWriteBuffer(bufferVF, CL_TRUE, 0, sizeof(float) * nx * ny * nz, vf.data());
+    err = queue.enqueueWriteBuffer(bufferUF, CL_TRUE, 0, sizeof(double) * nx * ny * nz, uf.data());
+    err = queue.enqueueWriteBuffer(bufferVF, CL_TRUE, 0, sizeof(double) * nx * ny * nz, vf.data());
 
     cl::Kernel updateUAKernel(program, "wind_induced_currents_davies85_variable_parameters_calc_ua");
 
@@ -1489,7 +1489,7 @@ void Solver::solve() {
         err = queue.enqueueNDRangeKernel(calcMaxRowKernel, cl::NullRange, rowRange, cl::NullRange);
         err = queue.enqueueNDRangeKernel(calcMaxKernel, cl::NullRange, valueRange, cl::NullRange);
 
-        err = queue.enqueueReadBuffer(bufferV, CL_TRUE, 0, sizeof(float), &nuMax);
+        err = queue.enqueueReadBuffer(bufferV, CL_TRUE, 0, sizeof(double), &nuMax);
 
         double dt1 = min(dtMax, hMin*dzMin*hMin*dzMin/2/nuMax);
 
@@ -1507,17 +1507,17 @@ void Solver::solve() {
             
             calcTime += duration;
 
-            err = queue.enqueueReadBuffer(bufferUA, CL_TRUE, 0, sizeof(float) * nx * ny, ua.data());
-            err = queue.enqueueReadBuffer(bufferVA, CL_TRUE, 0, sizeof(float) * nx * ny, va.data());
-            err = queue.enqueueReadBuffer(bufferZ, CL_TRUE, 0, sizeof(float) * nx * ny, z.data());
+            err = queue.enqueueReadBuffer(bufferUA, CL_TRUE, 0, sizeof(double) * nx * ny, ua.data());
+            err = queue.enqueueReadBuffer(bufferVA, CL_TRUE, 0, sizeof(double) * nx * ny, va.data());
+            err = queue.enqueueReadBuffer(bufferZ, CL_TRUE, 0, sizeof(double) * nx * ny, z.data());
 
-            err = queue.enqueueReadBuffer(bufferQX, CL_TRUE, 0, sizeof(float) * nx * ny, qx.data());
-            err = queue.enqueueReadBuffer(bufferQY, CL_TRUE, 0, sizeof(float) * nx * ny, qy.data());
+            err = queue.enqueueReadBuffer(bufferQX, CL_TRUE, 0, sizeof(double) * nx * ny, qx.data());
+            err = queue.enqueueReadBuffer(bufferQY, CL_TRUE, 0, sizeof(double) * nx * ny, qy.data());
 
-            err = queue.enqueueReadBuffer(bufferUF, CL_TRUE, 0, sizeof(float) * nx * ny * nz, uf.data());
-            err = queue.enqueueReadBuffer(bufferVF, CL_TRUE, 0, sizeof(float) * nx * ny * nz, vf.data());
+            err = queue.enqueueReadBuffer(bufferUF, CL_TRUE, 0, sizeof(double) * nx * ny * nz, uf.data());
+            err = queue.enqueueReadBuffer(bufferVF, CL_TRUE, 0, sizeof(double) * nx * ny * nz, vf.data());
 
-            err = queue.enqueueReadBuffer(bufferNU, CL_TRUE, 0, sizeof(float) * nx * ny * (nz + 1), nu.data());
+            err = queue.enqueueReadBuffer(bufferNU, CL_TRUE, 0, sizeof(double) * nx * ny * (nz + 1), nu.data());
 
             writeData(t, m, nx, ny, nz, ua, va, z, uf, vf, outDir);
 

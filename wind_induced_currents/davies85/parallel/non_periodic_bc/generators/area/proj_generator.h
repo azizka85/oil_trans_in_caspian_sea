@@ -6,25 +6,25 @@
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Area {
 	class ProjGenerator : public IGenerator {
 		private:
-			float latMin;
-			float latMax;
+			double latMin;
+			double latMax;
 
-			float lonMin;
-			float lonMax;
+			double lonMin;
+			double lonMax;
 
 		public:
 			ProjGenerator(
-				float latMin, float latMax,
-				float lonMin, float lonMax
+				double latMin, double latMax,
+				double lonMin, double lonMax
 			);
 
-			float getLatMin();
-			float getLatMax();
-			void setLatMinMax(float latMin, float latMax);
+			double getLatMin();
+			double getLatMax();
+			void setLatMinMax(double latMin, double latMax);
 
-			float getLonMin();
-			float getLonMax();
-			void setLonMinMax(float lonMin, float lonMax);
+			double getLonMin();
+			double getLonMax();
+			void setLonMinMax(double lonMin, double lonMax);
 
 			path createDirectory(path outDir) override;
 

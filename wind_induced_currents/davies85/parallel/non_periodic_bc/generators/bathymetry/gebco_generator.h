@@ -8,45 +8,45 @@
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Bathymetry {
 	class GEBCOGenerator : public IGenerator {
 	private:
-		float latMin;
-		float latMax;
+		double latMin;
+		double latMax;
 
-		float lonMin;
-		float lonMax;
+		double lonMin;
+		double lonMax;
 
-		float refDepth;
-		float minDepth;
+		double refDepth;
+		double minDepth;
 
 		string filePath;
 
 	public:
 		GEBCOGenerator(
-			float latMin, float latMax,
-			float lonMin, float lonMax,
-			float refDepth, float minDepth,
+			double latMin, double latMax,
+			double lonMin, double lonMax,
+			double refDepth, double minDepth,
 			string filePath
 		);
 
-		float getLatMin();
-		float getLatMax();
-		void setLatMinMax(float latMin, float latMax);
+		double getLatMin();
+		double getLatMax();
+		void setLatMinMax(double latMin, double latMax);
 
-		float getLonMin();
-		float getLonMax();
-		void setLonMinMax(float lonMin, float lonMax);
+		double getLonMin();
+		double getLonMax();
+		void setLonMinMax(double lonMin, double lonMax);
 
-		float getRefDepth();
-		void setRefDepth(float val);
+		double getRefDepth();
+		void setRefDepth(double val);
 
-		float getMinDepth();
-		void setMinDepth(float val);
+		double getMinDepth();
+		void setMinDepth(double val);
 
 		string getFilePath();
 		void setFilePath(string val);
 
 		path createDirectory(path outDir) override;
 
-		vector<float> generateH(int nx, int ny) override;
+		vector<double> generateH(int nx, int ny) override;
 	};
 }
 

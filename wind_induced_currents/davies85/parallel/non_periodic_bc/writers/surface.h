@@ -10,12 +10,12 @@ using namespace std::filesystem;
 
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Writers::Surface {
 	void write(
-        float t, int m,
+        double t, int m,
         int nx, int ny,
-        float dx, float dy,
-        vector<float>& ua, vector<float>& va,
-        vector<float>& qx, vector<float>& qy,
-        vector<float>& z, path outDir
+        double dx, double dy,
+        vector<double>& ua, vector<double>& va,
+        vector<double>& qx, vector<double>& qy,
+        vector<double>& z, path outDir
     );
 }
 

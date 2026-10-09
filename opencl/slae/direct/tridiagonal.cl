@@ -1,26 +1,26 @@
 inline void slae_direct_tridiagonal_calc(
     int ny, int nz, 
     int i, int j,
-    __global const float* l,
-    __global const float* c,
-    __global const float* r,
-    __global float* d,
-    __global float* u
+    __global const double* l,
+    __global const double* c,
+    __global const double* r,
+    __global double* d,
+    __global double* u
 ) {
     int shift = nz * (j + i*ny);
 
-    __global const float* ls = l + shift;
-    __global const float* cs = c + shift;
-    __global const float* rs = r + shift;
-    __global float* ds = d + shift;
-    __global float* us = u + shift;
+    __global const double* ls = l + shift;
+    __global const double* cs = c + shift;
+    __global const double* rs = r + shift;
+    __global double* ds = d + shift;
+    __global double* us = u + shift;
 
     if (nz > 0) {
         us[0] = rs[0] / cs[0];
         ds[0] = ds[0] / cs[0];
 
         for (int k = 1; k < nz; k++) {
-            float c1 = cs[k] - ls[k]*us[k-1];
+            double c1 = cs[k] - ls[k]*us[k-1];
     
             us[k] = rs[k] / c1;
             ds[k] = (ds[k] - ls[k]*ds[k-1]) / c1;

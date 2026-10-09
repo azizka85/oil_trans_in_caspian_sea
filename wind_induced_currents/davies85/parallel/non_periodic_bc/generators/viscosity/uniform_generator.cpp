@@ -10,15 +10,15 @@ using namespace Utils;
 
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Viscosity;
 
-UniformGenerator::UniformGenerator(float num) {
+UniformGenerator::UniformGenerator(double num) {
 	setNUM(num);
 }
 
-float UniformGenerator::getNUM() {
+double UniformGenerator::getNUM() {
     return num;
 }
 
-void UniformGenerator::setNUM(float val) {
+void UniformGenerator::setNUM(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("NUM should be > 0, but it is {}", val)
@@ -36,14 +36,14 @@ path UniformGenerator::createDirectory(path outDir) {
     );
 }
 
-vector<float> UniformGenerator::generateNU(
+vector<double> UniformGenerator::generateNU(
     int nx, int ny, int nz,
-    vector<float>& dz, vector<float>& h,
-    vector<float>& u10, vector<float>& v10,
-    vector<float>& qx, vector<float>& qy,
-    vector<float>& ua, vector<float>& va
+    vector<double>& dz, vector<double>& h,
+    vector<double>& u10, vector<double>& v10,
+    vector<double>& qx, vector<double>& qy,
+    vector<double>& ua, vector<double>& va
 ) {
-    vector<float> nu(nx * ny * nz);
+    vector<double> nu(nx * ny * nz);
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {

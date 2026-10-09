@@ -10,15 +10,15 @@ using namespace Utils;
 
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::DZ;
 
-UniformGenerator::UniformGenerator(float dzm) {
+UniformGenerator::UniformGenerator(double dzm) {
 	setDZM(dzm);
 }
 
-float UniformGenerator::getDZM() {
+double UniformGenerator::getDZM() {
     return dzm;
 }
 
-void UniformGenerator::setDZM(float val) {
+void UniformGenerator::setDZM(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("DZM should be > 0, but it is {}", val)
@@ -36,12 +36,12 @@ path UniformGenerator::createDirectory(path outDir) {
     );
 }
 
-vector<float> UniformGenerator::generateDZ(){
+vector<double> UniformGenerator::generateDZ(){
     int nz = static_cast<int>(
         ceil(1. / dzm)
     );
 
-    vector<float> dz(nz);
+    vector<double> dz(nz);
 
     for (int k = 0; k < nz; k++) {
         dz[k] = dzm;

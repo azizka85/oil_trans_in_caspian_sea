@@ -10,21 +10,21 @@ using namespace std::filesystem;
 
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Writers::Volume {
     void write(
-        float t, int m,
+        double t, int m,
         int nx, int ny, int nz,
-        float dx, float dy,
-        vector<float>& dz, vector<float>& h,
-        vector<float>& ua, vector<float>& va,
-        vector<float>& uf, vector<float>& vf,
+        double dx, double dy,
+        vector<double>& dz, vector<double>& h,
+        vector<double>& ua, vector<double>& va,
+        vector<double>& uf, vector<double>& vf,
         path outDir
     );
 
     void writeViscosity(
-        float t, int m,
+        double t, int m,
         int nx, int ny, int nz,
-        float dx, float dy,
-        vector<float>& dz, vector<float>& h,
-        vector<float>& nu,
+        double dx, double dy,
+        vector<double>& dz, vector<double>& h,
+        vector<double>& nu,
         path outDir
     );
 }

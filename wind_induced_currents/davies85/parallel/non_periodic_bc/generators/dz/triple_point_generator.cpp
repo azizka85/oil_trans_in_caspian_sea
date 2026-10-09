@@ -10,21 +10,21 @@ using namespace Utils;
 
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::DZ;
 
-TriplePointGenerator::TriplePointGenerator(float dzMin, float dzMax, float zm) {
+TriplePointGenerator::TriplePointGenerator(double dzMin, double dzMax, double zm) {
     setDZMinMax(dzMin, dzMax);
 
     setZM(zm);
 }
 
-float TriplePointGenerator::getDZMin() {
+double TriplePointGenerator::getDZMin() {
     return dzMin;
 }
 
-float TriplePointGenerator::getDZMax() {
+double TriplePointGenerator::getDZMax() {
     return dzMax;
 }
 
-void TriplePointGenerator::setDZMinMax(float dzMin, float dzMax) {
+void TriplePointGenerator::setDZMinMax(double dzMin, double dzMax) {
     if (dzMin <= 0) {
         throw runtime_error(
             format("DZMin should be > 0, but it is {}", dzMin)
@@ -47,11 +47,11 @@ void TriplePointGenerator::setDZMinMax(float dzMin, float dzMax) {
     this->dzMax = dzMax;
 }
 
-float TriplePointGenerator::getZM() {
+double TriplePointGenerator::getZM() {
     return zm;
 }
 
-void TriplePointGenerator::setZM(float val) {
+void TriplePointGenerator::setZM(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("ZM should be > 0, but it is {}", val)
@@ -69,11 +69,11 @@ path TriplePointGenerator::createDirectory(path outDir) {
     );
 }
 
-vector<float> TriplePointGenerator::generateDZ() {
-    vector<float> dz;
+vector<double> TriplePointGenerator::generateDZ() {
+    vector<double> dz;
 
-    float z = 0;
-    float vdz = calcDZ(z);
+    double z = 0;
+    double vdz = calcDZ(z);
 
     dz.push_back(vdz);
 
@@ -86,10 +86,10 @@ vector<float> TriplePointGenerator::generateDZ() {
 
                 int n = dz.size();
 
-                float dzd = 1 - z;
+                double dzd = 1 - z;
 
                 if (n > 1) {
-                    float dzp = dz[n - 2];
+                    double dzp = dz[n - 2];
 
                     dz[n - 2] = (dzd + dzp) / 2;
                     dz[n - 1] = (dzd + dzp) / 2;
@@ -109,8 +109,8 @@ vector<float> TriplePointGenerator::generateDZ() {
     return dz;
 }
 
-float TriplePointGenerator::calcDZ(float z) {
-    float k = dzMax / (zm * zm * zm * zm / 4 - (zm + 1) * zm * zm * zm / 3 + zm * zm * zm / 2);
+double TriplePointGenerator::calcDZ(double z) {
+    double k = dzMax / (zm * zm * zm * zm / 4 - (zm + 1) * zm * zm * zm / 3 + zm * zm * zm / 2);
 
     return k * (z * z * z * z / 4 - (zm + 1) * z * z * z / 3 + zm * z * z / 2) + dzMin;
 }

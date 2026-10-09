@@ -7,7 +7,7 @@ using namespace Utils;
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Writers;
 
 void Statistics::write(
-    vector<tuple<int, float, long long, float, float, float>>& statistics,
+    vector<tuple<int, double, long long, double, double, double>>& statistics,
     path outDir
 ) {
     auto file = FS::createFileByPath(

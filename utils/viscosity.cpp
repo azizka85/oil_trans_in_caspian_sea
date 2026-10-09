@@ -2,8 +2,8 @@
 
 using namespace Utils;
 
-float Viscosity::maxNU(vector<float>& nu, int nx, int ny, int nz) {
-    float nuMax = nu[0];
+double Viscosity::maxNU(vector<double>& nu, int nx, int ny, int nz) {
+    double nuMax = nu[0];
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {

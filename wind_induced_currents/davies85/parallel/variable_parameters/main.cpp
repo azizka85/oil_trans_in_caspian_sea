@@ -7,36 +7,36 @@ using namespace std;
 using namespace WindInducedCurrents::Davies85::Parallel::VariableParameters;
 
 int main() {
-    const float f = 1.2e-4;
-    const float b = 1.1;
+    const double f = 1.2e-4;
+    const double b = 1.1;
 
-    const float g = 9.81;
-    const float rho = 1025;
-    const float kb = 0.002;
+    const double g = 9.81;
+    const double rho = 1025;
+    const double kb = 0.002;
 
-    const float num = 0.4;
-    const float nub = 0.005;
-	const float hp = 100;
+    const double num = 0.4;
+    const double nub = 0.005;
+	const double hp = 100;
     const GenerateNU nug = GenerateNU::UniformNU;
 
-    const float hm = 260;
+    const double hm = 260;
     const GenerateH hg = GenerateH::UniformH;
 
-    const float w = 260;
-    const float l = 260;
+    const double w = 260;
+    const double l = 260;
 
-    const float qxm = 1.5;
-    const float qym = 1.5;
+    const double qxm = 1.5;
+    const double qym = 1.5;
     const GenerateQ qg = GenerateQ::UniformQ;
 
-    const float dx = 13;
-    const float dy = 13;
+    const double dx = 13;
+    const double dy = 13;
 
-    const float dzm = 0.002;
+    const double dzm = 0.002;
     const GenerateDZ dzg = GenerateDZ::UniformDZ;
 
-    const float endTime = 60000;
-    const float outputTimeStep = 600;
+    const double endTime = 60000;
+    const double outputTimeStep = 600;
 
     const string dir = "data";
 

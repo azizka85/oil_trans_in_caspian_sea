@@ -12,11 +12,11 @@ namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Wi
 	struct Data {
 		int64_t time;
 
-		vector<float> u10;
-		vector<float> v10;
+		vector<double> u10;
+		vector<double> v10;
 
-		vector<float> qx;
-		vector<float> qy;
+		vector<double> qx;
+		vector<double> qy;
 	};
 
 	class IGenerator {

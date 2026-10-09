@@ -37,56 +37,56 @@ namespace WindInducedCurrents::Davies85::Parallel::VariableParameters {
 
     class Solver {
         private:
-            float f;
-            float b;
+            double f;
+            double b;
 
-            float hm;
+            double hm;
             GenerateH hg;
-            vector<float> h;
+            vector<double> h;
             
-            float w;
-            float l;
+            double w;
+            double l;
             
-            float g;
-            float rho;
-            float kb;
+            double g;
+            double rho;
+            double kb;
 
-            float num;
-			float nub;
-			float hp;
+            double num;
+			double nub;
+			double hp;
             GenerateNU nug;
-            vector<float> nu;
+            vector<double> nu;
 
-            float qxm;
-            float qym;
+            double qxm;
+            double qym;
             GenerateQ qg;
-            vector<float> qx;
-            vector<float> qy;
+            vector<double> qx;
+            vector<double> qy;
 
-            float dx;
-            float dy;
+            double dx;
+            double dy;
 
-            float dzm;
+            double dzm;
             GenerateDZ dzg;
-            vector<float> dz;
+            vector<double> dz;
 
-            float endTime;
-            float outputTimeStep;
+            double endTime;
+            double outputTimeStep;
             string dir;
 
             void generateH(int nx, int ny);
             void generateUniformH(int nx, int ny);
             void generateCosineH(int nx, int ny);
 
-            tuple<float, float> minMaxH(int nx, int ny);
+            tuple<double, double> minMaxH(int nx, int ny);
 
             void generateNU(
                 int nx, int ny, int nz,
-                vector<float>& ua,
-                vector<float>& va,
-                vector<float>& z,
-                vector<float>& uf, 
-                vector<float>& vf
+                vector<double>& ua,
+                vector<double>& va,
+                vector<double>& z,
+                vector<double>& uf, 
+                vector<double>& vf
             );
 
             void generateUniformNU(int nx, int ny, int nz);
@@ -113,15 +113,15 @@ namespace WindInducedCurrents::Davies85::Parallel::VariableParameters {
 
             cl::Kernel createUpdateLinearNUKernel(cl::Program& program);
 
-            float maxNU(int nx, int ny, int nz);
+            double maxNU(int nx, int ny, int nz);
 
             void generateQX(
                 int nx, int ny, int nz,
-                vector<float>& ua,
-                vector<float>& va,
-                vector<float>& z,
-                vector<float>& uf, 
-                vector<float>& vf
+                vector<double>& ua,
+                vector<double>& va,
+                vector<double>& z,
+                vector<double>& uf, 
+                vector<double>& vf
             );
 
             void generateUniformQX(int nx, int ny);
@@ -129,24 +129,24 @@ namespace WindInducedCurrents::Davies85::Parallel::VariableParameters {
 
             void generateQY(                
                 int nx, int ny, int nz,
-                vector<float>& ua,
-                vector<float>& va,
-                vector<float>& z,
-                vector<float>& uf, 
-                vector<float>& vf
+                vector<double>& ua,
+                vector<double>& va,
+                vector<double>& z,
+                vector<double>& uf, 
+                vector<double>& vf
             );
 
             void generateUniformQY(int nx, int ny);
             void generateQYFromWindSpeed(int nx, int ny);
 
-            cl::Kernel createUpdateQKernel(float qm, int ny, cl::Buffer& bufferQ, cl::Program& program);
-            cl::Kernel createUpdateUniformQKernel(float qm, int ny, cl::Buffer& bufferQ, cl::Program& program);
-            cl::Kernel createUpdateQFromWindSpeedKernel(float qm, int ny, cl::Buffer& bufferQ, cl::Program& program);
+            cl::Kernel createUpdateQKernel(double qm, int ny, cl::Buffer& bufferQ, cl::Program& program);
+            cl::Kernel createUpdateUniformQKernel(double qm, int ny, cl::Buffer& bufferQ, cl::Program& program);
+            cl::Kernel createUpdateQFromWindSpeedKernel(double qm, int ny, cl::Buffer& bufferQ, cl::Program& program);
 
             void generateDZ();
             void generateUniformDZ();
             void generateParabolicDZ();
-            float calcParabolicDZFactor(float z);            
+            double calcParabolicDZFactor(double z);            
 
             path createDirectory();
 
@@ -156,169 +156,169 @@ namespace WindInducedCurrents::Davies85::Parallel::VariableParameters {
 
             void setInitialCondition(
                 int nx, int ny, int nz, 
-                vector<float>& uf, 
-                vector<float>& vf, 
-                vector<float>& ua,
-                vector<float>& va,
-                vector<float>& z
+                vector<double>& uf, 
+                vector<double>& vf, 
+                vector<double>& ua,
+                vector<double>& va,
+                vector<double>& z
             );                                       
 
-            float adjustTimeStep(float t, float dt, float tMax, float dtMax, bool mult);
+            double adjustTimeStep(double t, double dt, double tMax, double dtMax, bool mult);
             
-            float maxAbsDifference(
+            double maxAbsDifference(
                 int nx, int ny, 
-                vector<float>& u,
-                vector<float>& u1
+                vector<double>& u,
+                vector<double>& u1
             );
 
-            float maxAbsDifference(
+            double maxAbsDifference(
                 int nx, int ny, int nz, 
-                vector<float> &u, 
-                vector<float> &u1
+                vector<double> &u, 
+                vector<double> &u1
             );
 
             void updateData(
                 int nx, int ny, 
-                vector<float>& u,
-                vector<float>& u1
+                vector<double>& u,
+                vector<double>& u1
             );
 
             void updateData(
                 int nx, int ny, int nz,
-                vector<float>& u, 
-                vector<float>& u1
+                vector<double>& u, 
+                vector<double>& u1
             );
 
             void writeHeights(int nx, int ny, path outDir);
 
             void writeSurfaceData(
-                float t, int m, 
+                double t, int m, 
                 int nx, int ny, 
-                vector<float> &ua, 
-                vector<float> &va, 
-                vector<float> &z,
+                vector<double> &ua, 
+                vector<double> &va, 
+                vector<double> &z,
                 path outDir
             );
 
             void writeVolumeData(
-                float t, int m, 
+                double t, int m, 
                 int nx, int ny, int nz, 
-                vector<float> &ua, 
-                vector<float> &va, 
-                vector<float> &uf, 
-                vector<float> &vf, 
+                vector<double> &ua, 
+                vector<double> &va, 
+                vector<double> &uf, 
+                vector<double> &vf, 
                 path outDir
             );
 
             void writeViscosity(
-                float t, int m, 
+                double t, int m, 
                 int nx, int ny, int nz,
                 path outDir
             );
 
             void writeData(
-                float t, int m,
+                double t, int m,
                 int nx, int ny, int nz,
-                vector<float>& ua,
-                vector<float>& va,
-                vector<float>& z,
-                vector<float>& uf, 
-                vector<float>& vf,
+                vector<double>& ua,
+                vector<double>& va,
+                vector<double>& z,
+                vector<double>& uf, 
+                vector<double>& vf,
                 path outDir
             );
 
             void writeStatistics(
-                vector<tuple<int, float, long long, float, float, float>>& statistics, 
+                vector<tuple<int, double, long long, double, double, double>>& statistics, 
                 path outDir
             );
 
         public:
             Solver(
-                float f, float b,
-                float hm, GenerateH hg,
-                float w, float l,
-                float g, float rho, float kb, 
-                float num, float nub, float hp, GenerateNU nug,
-                float qxm, float qym, GenerateQ qg,
-                float dx, float dy, 
-                float dzm, GenerateDZ dzg,
-                float endTime, float outputTimeStep, string dir
+                double f, double b,
+                double hm, GenerateH hg,
+                double w, double l,
+                double g, double rho, double kb, 
+                double num, double nub, double hp, GenerateNU nug,
+                double qxm, double qym, GenerateQ qg,
+                double dx, double dy, 
+                double dzm, GenerateDZ dzg,
+                double endTime, double outputTimeStep, string dir
             );
 
-            float getF();
-            void setF(float val);
+            double getF();
+            void setF(double val);
 
-            float getB();
-            void setB(float val);
+            double getB();
+            void setB(double val);
 
-            float getHM();
-            void setHM(float val);
+            double getHM();
+            void setHM(double val);
 
             GenerateH getHG();
             void setHG(GenerateH val);
 
-            vector<float> getH();                        
+            vector<double> getH();                        
 
-            float getW();
-            void setW(float val);
+            double getW();
+            void setW(double val);
 
-            float getL();
-            void setL(float val);
+            double getL();
+            void setL(double val);
 
-            float getG();
-            void setG(float val);
+            double getG();
+            void setG(double val);
 
-            float getRHO();
-            void setRHO(float val);
+            double getRHO();
+            void setRHO(double val);
 
-            float getKB();
-            void setKB(float val);
+            double getKB();
+            void setKB(double val);
 
-            float getNUM();
-            void setNUM(float val);
+            double getNUM();
+            void setNUM(double val);
 
-			float getNUB();
-			void setNUB(float val);
+			double getNUB();
+			void setNUB(double val);
 
-			float getHP();
-			void setHP(float val);
+			double getHP();
+			void setHP(double val);
 
             GenerateNU getNUG();
             void setNUG(GenerateNU val);
 
-            vector<float> getNU();                        
+            vector<double> getNU();                        
 
-            float getQXM();
-            void setQXM(float val);
+            double getQXM();
+            void setQXM(double val);
 
-            float getQYM();
-            void setQYM(float val);
+            double getQYM();
+            void setQYM(double val);
 
             GenerateQ getQG();
             void setQG(GenerateQ val);
 
-            vector<float> getQX();            
-            vector<float> getQY();            
+            vector<double> getQX();            
+            vector<double> getQY();            
 
-            float getDX();
-            void setDX(float val);
+            double getDX();
+            void setDX(double val);
 
-            float getDY();
-            void setDY(float val);
+            double getDY();
+            void setDY(double val);
 
-            float getDZM();
-            void setDZM(float val);
+            double getDZM();
+            void setDZM(double val);
 
             GenerateDZ getDZG();
             void setDZG(GenerateDZ dzg);
 
-            vector<float> getDZ();            
+            vector<double> getDZ();            
 
-            float getEndTime();
-            void setEndTime(float val);
+            double getEndTime();
+            void setEndTime(double val);
 
-            float getOutputTimeStep();
-            void setOutputTimeStep(float val);
+            double getOutputTimeStep();
+            void setOutputTimeStep(double val);
 
             string getDir();                                                                        
             void setDir(string val);

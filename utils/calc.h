@@ -7,35 +7,35 @@
 using namespace std;
 
 namespace Utils::Calc {
-	float adjustTimeStep(float b, float t, float dt, float tMax, float dtMax, bool mult);
+	double adjustTimeStep(double b, double t, double dt, double tMax, double dtMax, bool mult);
 
-    float maxAbsDifference(
+    double maxAbsDifference(
         int nx, int ny,
-        vector<float>& u,
-        vector<float>& u1
+        vector<double>& u,
+        vector<double>& u1
     );
 
-    float maxAbsDifference(
+    double maxAbsDifference(
         int nx, int ny, int nz,
-        vector<float>& u,
-        vector<float>& u1
+        vector<double>& u,
+        vector<double>& u1
     );
 
     void updateData(
         int nx, int ny,
-        vector<float>& u,
-        vector<float>& u1
+        vector<double>& u,
+        vector<double>& u1
     );
 
     void updateData(
         int nx, int ny, int nz,
-        vector<float>& u,
-        vector<float>& u1
+        vector<double>& u,
+        vector<double>& u1
     );
 
-    tuple<float, float, float, float> project(
-        float latMin, float latMax,
-        float lonMin, float lonMax
+    tuple<double, double, double, double> project(
+        double latMin, double latMax,
+        double lonMin, double lonMax
     );
 }
 

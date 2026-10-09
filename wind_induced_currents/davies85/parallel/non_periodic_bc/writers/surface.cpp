@@ -7,12 +7,12 @@ using namespace Utils;
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Writers;
 
 void Surface::write(
-    float t, int m,
+    double t, int m,
     int nx, int ny,
-    float dx, float dy,
-    vector<float>& ua, vector<float>& va,
-    vector<float>& qx, vector<float>& qy,
-    vector<float>& z, path outDir
+    double dx, double dy,
+    vector<double>& ua, vector<double>& va,
+    vector<double>& qx, vector<double>& qy,
+    vector<double>& z, path outDir
 ) {
     auto file = FS::createFileByPath(
         outDir /
@@ -26,23 +26,23 @@ void Surface::write(
     file << "ASCII" << endl;
     file << "DATASET STRUCTURED_GRID" << endl;
     file << format("DIMENSIONS {} {} 1", nx, ny) << endl;
-    file << format("POINTS {} float", nx * ny) << endl;
+    file << format("POINTS {} double", nx * ny) << endl;
 
     for (int j = 0; j < ny; j++) {
         for (int i = 0; i < nx; i++) {
-            float x = dx * i;
-            float y = dy * j;
+            double x = dx * i;
+            double y = dy * j;
 
             file << format("{:.3f} {:.3f} 0.0", x, y) << endl;
         }
     }
 
     file << "FIELD FieldData 1" << endl;
-    file << "Time 1 1 float" << endl;
+    file << "Time 1 1 double" << endl;
     file << format("{:.3f}", t) << endl;
     file << format("POINT_DATA {}", nx * ny) << endl;
 
-    file << "VECTORS VA float" << endl;
+    file << "VECTORS VA double" << endl;
 
     for (int j = 0; j < ny; j++) {
         for (int i = 0; i < nx; i++) {
@@ -52,7 +52,7 @@ void Surface::write(
         }
     }
 
-    file << "VECTORS Q float" << endl;
+    file << "VECTORS Q double" << endl;
 
     for (int j = 0; j < ny; j++) {
         for (int i = 0; i < nx; i++) {
@@ -62,7 +62,7 @@ void Surface::write(
         }
     }
 
-    file << "SCALARS z float" << endl;
+    file << "SCALARS z double" << endl;
     file << "LOOKUP_TABLE default" << endl;
 
     for (int j = 0; j < ny; j++) {

@@ -6,29 +6,29 @@
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Wind {
 	class UniformGenerator : public IGenerator {
 	private:
-		float u10m;
-		float v10m;
+		double u10m;
+		double v10m;
 
-		float qxm;
-		float qym;
+		double qxm;
+		double qym;
 
 	public:
 		UniformGenerator(
-			float u10m, float v10m, 
-			float qxm, float qym
+			double u10m, double v10m, 
+			double qxm, double qym
 		);
 
-		float getU10M();
-		void setU10M(float val);
+		double getU10M();
+		void setU10M(double val);
 
-		float getV10M();
-		void setV10M(float val);
+		double getV10M();
+		void setV10M(double val);
 
-		float getQXM();
-		void setQXM(float val);
+		double getQXM();
+		void setQXM(double val);
 
-		float getQYM();
-		void setQYM(float val);
+		double getQYM();
+		void setQYM(double val);
 
 		path createDirectory(path outDir) override;
 

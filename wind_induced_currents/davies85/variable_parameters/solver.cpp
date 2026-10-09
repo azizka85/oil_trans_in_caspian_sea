@@ -391,7 +391,7 @@ void Solver::generateCosineH(int nx, int ny) {
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
-            h[i][j] = hm*(1 - 0.8*cos(2*M_PI*(i/(nx-1.) + j/(ny-1.))))/2;
+            h[i][j] = hm*(1 - 0.98*cos(2*M_PI*(i/(nx-1.) + j/(ny-1.))))/2;
         }
     }
 }
@@ -1239,6 +1239,16 @@ void Solver::writeStatistics(vector<tuple<int, double, long long, double, double
     }
 }
 
+double maxAbsRes(vector<double> v) {
+	double maxRes = 0.;
+
+	for (auto r : v) {
+		maxRes = max(maxRes, abs(r));
+	}
+
+	return maxRes;
+}
+
 void Solver::solve() {
     auto outDir = createDirectory();
 
@@ -1338,12 +1348,26 @@ void Solver::solve() {
         
         calculateResidualElements(dt, nx, ny, nz, ua, u1a, va, v1a, uf, vf, ud, vd);        
 
+		double maxRes = 0.;
+
         for (int i = 0; i < nx; i++) {
             for (int j = 0; j < ny; j++) {
                 createTridiagonalMatrix(i, j, nz, dt, al, ac, ar);
 
+				auto td = ud[i][j];
+                span<double> tds(td);
+
                 Tridiagonal::solve(al, ac, ar, ud[i][j], uf[i][j]);
+                Tridiagonal::residual(td.size(), al, ac, ar, uf[i][j], tds);
+
+				maxRes = max(maxRes, maxAbsRes(td));
+
+				td = vd[i][j];
+
                 Tridiagonal::solve(al, ac, ar, vd[i][j], vf[i][j]); 
+				Tridiagonal::residual(td.size(), al, ac, ar, vf[i][j], tds);
+
+                maxRes = max(maxRes, maxAbsRes(td));
             }
         }
 
@@ -1379,13 +1403,11 @@ void Solver::solve() {
             auto zmd = maxAbsDifference(nx, ny, zp, z);
 
             cout << format(
-                "Write data in file t={:.3f}, convergence of u={:.5f}, v={:.5f}, z={:.7f} with dt={:.5}, calc time={}", 
-                t, umd, vmd, zmd, dt, calcTime
+                "Write data in file t={:.3f}, res = {}, diff u={:.5f}, v={:.5f}, z={:.7f} with dt={:.5}, calc time={}", 
+                t, maxRes, umd, vmd, zmd, dt, calcTime
             ) << endl;
 
             statistics.push_back({n, tn, calcTime, umd, vmd, zmd});
-
-
             
             updateData(nx, ny, zp, z);
             updateData(nx, ny, nz, up, uf);
@@ -1402,25 +1424,25 @@ void Solver::solve() {
 
         for (int i = 1; i < nx-1; i++) {
             for (int j = 1; j < ny-1; j++) {
-                z[i][j] += -(h[i+1][j]*ua[i+1][j] - h[i-1][j]*ua[i-1][j])/2/dx - (h[i][j+1]*va[i][j+1] - h[i][j-1]*va[i][j-1])/2/dy;
+                z[i][j] += -(h[i+1][j]*ua[i+1][j] - h[i-1][j]*ua[i-1][j])*dt/2/dx - (h[i][j+1]*va[i][j+1] - h[i][j-1]*va[i][j-1])*dt/2/dy;
             }
         }
 
         for (int j = 1; j < ny-1; j++) {
-            z[0][j] += -(h[1][j]*ua[1][j] - h[nx-1][j]*ua[nx-1][j])/2/dx - (h[0][j+1]*va[0][j+1] - h[0][j-1]*va[0][j-1])/2/dy;
-            z[nx-1][j] += -(h[0][j]*ua[0][j] - h[nx-2][j]*ua[nx-2][j])/2/dx - (h[nx-1][j+1]*va[nx-1][j+1] - h[nx-1][j-1]*va[nx-1][j-1])/2/dy;
+            z[0][j] += -(h[1][j]*ua[1][j] - h[nx-1][j]*ua[nx-1][j])*dt/2/dx - (h[0][j+1]*va[0][j+1] - h[0][j-1]*va[0][j-1])*dt/2/dy;
+            z[nx-1][j] += -(h[0][j]*ua[0][j] - h[nx-2][j]*ua[nx-2][j])*dt/2/dx - (h[nx-1][j+1]*va[nx-1][j+1] - h[nx-1][j-1]*va[nx-1][j-1])*dt/2/dy;
         }
 
         for (int i = 1; i < nx-1; i++) {
-            z[i][0] += -(h[i+1][0]*ua[i+1][0] - h[i-1][0]*ua[i-1][0])/2/dx - (h[i][1]*va[i][1] - h[i][ny-1]*va[i][ny-1])/2/dy;
-            z[i][ny-1] += -(h[i+1][ny-1]*ua[i+1][ny-1] - h[i-1][ny-1]*ua[i-1][ny-1])/2/dx - (h[i][0]*va[i][0] - h[i][ny-2]*va[i][ny-2])/2/dy;
+            z[i][0] += -(h[i+1][0]*ua[i+1][0] - h[i-1][0]*ua[i-1][0])*dt/2/dx - (h[i][1]*va[i][1] - h[i][ny-1]*va[i][ny-1])*dt/2/dy;
+            z[i][ny-1] += -(h[i+1][ny-1]*ua[i+1][ny-1] - h[i-1][ny-1]*ua[i-1][ny-1])*dt/2/dx - (h[i][0]*va[i][0] - h[i][ny-2]*va[i][ny-2])*dt/2/dy;
         }
 
-        z[0][0] += -(h[1][0]*ua[1][0] - h[nx-1][0]*ua[nx-1][0])/2/dx - (h[0][1]*va[0][1] - h[0][ny-1]*va[0][ny-1])/2/dy;
-        z[nx-1][0] += -(h[0][0]*ua[0][0] - h[nx-2][0]*ua[nx-2][0])/2/dx - (h[nx-1][1]*va[nx-1][1] - h[nx-1][ny-1]*va[nx-1][ny-1])/2/dy;
+        z[0][0] += -(h[1][0]*ua[1][0] - h[nx-1][0]*ua[nx-1][0])*dt/2/dx - (h[0][1]*va[0][1] - h[0][ny-1]*va[0][ny-1])*dt/2/dy;
+        z[nx-1][0] += -(h[0][0]*ua[0][0] - h[nx-2][0]*ua[nx-2][0])*dt/2/dx - (h[nx-1][1]*va[nx-1][1] - h[nx-1][ny-1]*va[nx-1][ny-1])*dt/2/dy;
 
-        z[0][ny-1] += -(h[1][ny-1]*ua[1][ny-1] - h[nx-1][ny-1]*ua[nx-1][ny-1])/2/dx - (h[0][0]*va[0][0] - h[0][ny-2]*va[0][ny-2])/2/dy;
-        z[nx-1][ny-1] += -(h[0][ny-1]*ua[0][ny-1] - h[nx-2][ny-1]*ua[nx-2][ny-1])/2/dx - (h[nx-1][0]*va[nx-1][0] - h[nx-1][ny-2]*va[nx-1][ny-2])/2/dy;
+        z[0][ny-1] += -(h[1][ny-1]*ua[1][ny-1] - h[nx-1][ny-1]*ua[nx-1][ny-1])*dt/2/dx - (h[0][0]*va[0][0] - h[0][ny-2]*va[0][ny-2])*dt/2/dy;
+        z[nx-1][ny-1] += -(h[0][ny-1]*ua[0][ny-1] - h[nx-2][ny-1]*ua[nx-2][ny-1])*dt/2/dx - (h[nx-1][0]*va[nx-1][0] - h[nx-1][ny-2]*va[nx-1][ny-2])*dt/2/dy;
     }
 
     writeStatistics(statistics, outDir);

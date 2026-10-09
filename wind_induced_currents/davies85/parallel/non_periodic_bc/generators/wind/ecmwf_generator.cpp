@@ -24,9 +24,9 @@ using namespace Utils;
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Wind;
 
 ECMWFGenerator::ECMWFGenerator(
-    float latMin, float latMax,
-    float lonMin, float lonMax,
-    float rhoAir, float Cd,
+    double latMin, double latMax,
+    double lonMin, double lonMax,
+    double rhoAir, double Cd,
     string filePath
 ) {
     setLatMinMax(latMin, latMax);
@@ -38,15 +38,15 @@ ECMWFGenerator::ECMWFGenerator(
     setFilePath(filePath);
 }
 
-float ECMWFGenerator::getLatMin() {
+double ECMWFGenerator::getLatMin() {
     return latMin;
 }
 
-float ECMWFGenerator::getLatMax() {
+double ECMWFGenerator::getLatMax() {
     return latMax;
 }
 
-void ECMWFGenerator::setLatMinMax(float latMin, float latMax) {
+void ECMWFGenerator::setLatMinMax(double latMin, double latMax) {
     if (latMin >= latMax) {
         throw runtime_error(
             format("LatMin should be < LatMax, but LatMin={} and LatMax={}", latMin, latMax)
@@ -57,15 +57,15 @@ void ECMWFGenerator::setLatMinMax(float latMin, float latMax) {
     this->latMax = latMax;
 }
 
-float ECMWFGenerator::getLonMin() {
+double ECMWFGenerator::getLonMin() {
     return lonMin;
 }
 
-float ECMWFGenerator::getLonMax() {
+double ECMWFGenerator::getLonMax() {
     return lonMax;
 }
 
-void ECMWFGenerator::setLonMinMax(float lonMin, float lonMax) {
+void ECMWFGenerator::setLonMinMax(double lonMin, double lonMax) {
     if (lonMin >= lonMax) {
         throw runtime_error(
             format("LonMin should be < LonMax, but LonMin={} and LonMax={}", lonMin, lonMax)
@@ -76,11 +76,11 @@ void ECMWFGenerator::setLonMinMax(float lonMin, float lonMax) {
     this->lonMax = lonMax;
 }
 
-float ECMWFGenerator::getRhoAir() {
+double ECMWFGenerator::getRhoAir() {
     return rhoAir;
 }
 
-void ECMWFGenerator::setRhoAir(float val) {
+void ECMWFGenerator::setRhoAir(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("RhoAir should be > 0, but it is {}", val)
@@ -90,11 +90,11 @@ void ECMWFGenerator::setRhoAir(float val) {
     rhoAir = val;
 }
 
-float ECMWFGenerator::getCd() {
+double ECMWFGenerator::getCd() {
     return Cd;
 }
 
-void ECMWFGenerator::setCd(float val) {
+void ECMWFGenerator::setCd(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("Cd should be > 0, but it is {}", val)
@@ -146,7 +146,7 @@ vector<Data> ECMWFGenerator::generate(int nx, int ny) {
 
     latVar.getVar(lats.data());
 
-    float latStep = lats.size() > 1 ? lats[0] - lats[1] : 0;
+    double latStep = lats.size() > 1 ? lats[0] - lats[1] : 0;
 
     NcVar lonVar = windFile.getVar("longitude");
     size_t lonSize = lonVar.getDim(0).getSize();
@@ -154,7 +154,7 @@ vector<Data> ECMWFGenerator::generate(int nx, int ny) {
 
     lonVar.getVar(lons.data());
 
-    float lonStep = lons.size() > 1 ? lons[1] - lons[0] : 0;
+    double lonStep = lons.size() > 1 ? lons[1] - lons[0] : 0;
 
     NcVar u10Var = windFile.getVar("u10");
     vector<double> u10Arr(timeSize * latSize * lonSize);
@@ -168,8 +168,8 @@ vector<Data> ECMWFGenerator::generate(int nx, int ny) {
 
     auto [minX, maxX, minY, maxY] = Calc::project(latMin, latMax, lonMin, lonMax);
 
-    float dx = (maxX - minX) / (nx - 1);
-    float dy = (maxY - minY) / (ny - 1);
+    double dx = (maxX - minX) / (nx - 1);
+    double dy = (maxY - minY) / (ny - 1);
 
     unique_ptr<PJ_CONTEXT, PJ_CONTEXT* (*)(PJ_CONTEXT*)> ctx(
         proj_context_create(),
@@ -204,11 +204,11 @@ vector<Data> ECMWFGenerator::generate(int nx, int ny) {
             lons.front(), lats.back()
         );
 
-        vector<float> u10(nx * ny);
-        vector<float> v10(nx * ny);
+        vector<double> u10(nx * ny);
+        vector<double> v10(nx * ny);
 
-        vector<float> qx(nx * ny);
-        vector<float> qy(nx * ny);
+        vector<double> qx(nx * ny);
+        vector<double> qy(nx * ny);
 
         int64_t refTime = timeSize > 0 ? times[0] : 0;
 
@@ -216,17 +216,17 @@ vector<Data> ECMWFGenerator::generate(int nx, int ny) {
             for (int j = 0; j < ny; j++) {
                 int id = j + i * ny;
 
-                float x = minX + dx * i;
-                float y = minY + dy * j;
+                double x = minX + dx * i;
+                double y = minY + dy * j;
 
                 PJ_COORD coord = proj_coord(x, y, 0, 0);
                 PJ_COORD geo = proj_trans(transformer.get(), PJ_INV, coord);
 
-                float vu10 = 0;
-                float vv10 = 0;
+                double vu10 = 0;
+                double vv10 = 0;
 
-                float vqx = 0;
-                float vqy = 0;
+                double vqx = 0;
+                double vqy = 0;
 
                 if (
                     geo.lp.lam >= lats.back() && geo.lp.lam <= lats.front() &&

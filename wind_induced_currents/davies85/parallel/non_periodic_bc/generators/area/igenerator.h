@@ -7,8 +7,8 @@ using namespace std::filesystem;
 
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Area {
 	struct Geometry {
-		float l;
-		float w;
+		double l;
+		double w;
 	};
 
 	class IGenerator {

@@ -9,7 +9,7 @@ using namespace std;
 using namespace std::filesystem;
 
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Writers::Height {
-	void write(vector<float> &h, int nx, int ny, float dx, float dy, path outDir);
+	void write(vector<double> &h, int nx, int ny, double dx, double dy, path outDir);
 }
 
 #endif

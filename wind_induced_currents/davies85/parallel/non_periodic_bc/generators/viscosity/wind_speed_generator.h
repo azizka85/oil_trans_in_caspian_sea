@@ -6,48 +6,48 @@
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Viscosity {
 	class WindSpeedGenerator : public IGenerator {
 		private:
-			float k0;
-			float k;
+			double k0;
+			double k;
 
-			float f;
-			float sigma;
+			double f;
+			double sigma;
 
-			float rho;
-			float nu0;
+			double rho;
+			double nu0;
 
 		public:
 			WindSpeedGenerator(
-				float k0, float k, 
-				float f, float sigma,
-				float rho, float nu0
+				double k0, double k, 
+				double f, double sigma,
+				double rho, double nu0
 			);
 
-			float getK0();
-			void setK0(float val);
+			double getK0();
+			void setK0(double val);
 
-			float getK();
-			void setK(float val);
+			double getK();
+			void setK(double val);
 
-			float getF();
-			void setF(float val);
+			double getF();
+			void setF(double val);
 
-			float getSigma();
-			void setSigma(float val);
+			double getSigma();
+			void setSigma(double val);
 
-			float getRho();
-			void setRho(float val);
+			double getRho();
+			void setRho(double val);
 
-			float getNU0();
-			void setNU0(float val);
+			double getNU0();
+			void setNU0(double val);
 
 			path createDirectory(path outDir) override;
 
-			vector<float> generateNU(
+			vector<double> generateNU(
 				int nx, int ny, int nz,
-				vector<float>& dz, vector<float>& h,
-				vector<float>& u10, vector<float>& v10,
-				vector<float>& qx, vector<float>& qy,
-				vector<float>& ua, vector<float>& va
+				vector<double>& dz, vector<double>& h,
+				vector<double>& u10, vector<double>& v10,
+				vector<double>& qx, vector<double>& qy,
+				vector<double>& ua, vector<double>& va
 			) override;
 	};
 }

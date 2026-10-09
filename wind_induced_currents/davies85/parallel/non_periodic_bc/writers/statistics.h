@@ -11,7 +11,7 @@ using namespace std::filesystem;
 
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Writers::Statistics {
     void write(
-        vector<tuple<int, float, long long, float, float, float>>& statistics,
+        vector<tuple<int, double, long long, double, double, double>>& statistics,
         path outDir
     );
 }

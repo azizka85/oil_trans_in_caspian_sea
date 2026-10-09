@@ -11,8 +11,8 @@ using namespace Utils;
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Wind;
 
 UniformGenerator::UniformGenerator(
-    float u10m, float v10m,
-    float qxm, float qym
+    double u10m, double v10m,
+    double qxm, double qym
 ) {
     setU10M(u10m);
     setV10M(v10m);
@@ -21,35 +21,35 @@ UniformGenerator::UniformGenerator(
 	setQYM(qym);
 }
 
-float UniformGenerator::getU10M() {
+double UniformGenerator::getU10M() {
     return u10m;
 }
 
-void UniformGenerator::setU10M(float val) {
+void UniformGenerator::setU10M(double val) {
     u10m = val;
 }
 
-float UniformGenerator::getV10M() {
+double UniformGenerator::getV10M() {
     return v10m;
 }
 
-void UniformGenerator::setV10M(float val) {
+void UniformGenerator::setV10M(double val) {
     v10m = val;
 }
 
-float UniformGenerator::getQXM() {
+double UniformGenerator::getQXM() {
     return qxm;
 }
 
-void UniformGenerator::setQXM(float val) {
+void UniformGenerator::setQXM(double val) {
     qxm = val;
 }
 
-float UniformGenerator::getQYM() {
+double UniformGenerator::getQYM() {
     return qym;
 }
 
-void UniformGenerator::setQYM(float val) {
+void UniformGenerator::setQYM(double val) {
     qym = val;
 }
 
@@ -62,11 +62,11 @@ path UniformGenerator::createDirectory(path outDir) {
 }
 
 vector<Data> UniformGenerator::generate(int nx, int ny) {
-    vector<float> u10(nx * ny);
-    vector<float> v10(nx * ny);
+    vector<double> u10(nx * ny);
+    vector<double> v10(nx * ny);
 
-    vector<float> qx(nx * ny);
-    vector<float> qy(nx * ny);
+    vector<double> qx(nx * ny);
+    vector<double> qy(nx * ny);
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {

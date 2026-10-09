@@ -8,38 +8,38 @@
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Wind {
 	class ECMWFGenerator : public IGenerator {
 		private:
-			float latMin;
-			float latMax;
+			double latMin;
+			double latMax;
 
-			float lonMin;
-			float lonMax;
+			double lonMin;
+			double lonMax;
 
-			float rhoAir;
-			float Cd;
+			double rhoAir;
+			double Cd;
 
 			string filePath;
 
 		public:
 			ECMWFGenerator(
-				float latMin, float latMax,
-				float lonMin, float lonMax,
-				float rhoAir, float Cd,
+				double latMin, double latMax,
+				double lonMin, double lonMax,
+				double rhoAir, double Cd,
 				string filePath
 			);
 
-			float getLatMin();
-			float getLatMax();
-			void setLatMinMax(float latMin, float latMax);
+			double getLatMin();
+			double getLatMax();
+			void setLatMinMax(double latMin, double latMax);
 
-			float getLonMin();
-			float getLonMax();
-			void setLonMinMax(float lonMin, float lonMax);
+			double getLonMin();
+			double getLonMax();
+			void setLonMinMax(double lonMin, double lonMax);
 
-			float getRhoAir();
-			void setRhoAir(float val);
+			double getRhoAir();
+			void setRhoAir(double val);
 
-			float getCd();
-			void setCd(float val);
+			double getCd();
+			void setCd(double val);
 
 			string getFilePath();
 			void setFilePath(string val);

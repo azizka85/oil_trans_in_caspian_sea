@@ -12,6 +12,8 @@
 #include <utils/calc.h>
 #include <utils/opencl.h>
 
+#include <slae/direct/tridiagonal.h>
+
 #include "writers/height.h"
 #include "writers/surface.h"
 #include "writers/volume.h"
@@ -21,13 +23,15 @@
 
 using namespace std::chrono;
 
+using namespace SLAE::Direct;
+
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC;
 
 Solver::Solver(
-    float b,
-    float f, float g, float rho, float kb,    
-    float dx, float dy,
-    float endTime, float outputTimeStep, string outDir,
+    double b,
+    double f, double g, double rho, double kb,    
+    double dx, double dy,
+    double endTime, double outputTimeStep, string outDir,
     unique_ptr<Generators::Area::IGenerator> areaGenerator,
     unique_ptr<Generators::DZ::IGenerator> dzGenerator,
     unique_ptr<Generators::Bathymetry::IGenerator> hGenerator,
@@ -55,11 +59,11 @@ Solver::Solver(
     setNUGenerator(move(nuGenerator));
 }
 
-float Solver::getB() {
+double Solver::getB() {
     return b;
 }
 
-void Solver::setB(float val) {
+void Solver::setB(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("B should be > 0, but it is {}", val)
@@ -69,19 +73,19 @@ void Solver::setB(float val) {
     b = val;
 }
 
-float Solver::getF() {
+double Solver::getF() {
     return f;
 }
 
-void Solver::setF(float val) {
+void Solver::setF(double val) {
     f = val;
 }
 
-float Solver::getG() {
+double Solver::getG() {
     return g;
 }
 
-void Solver::setG(float val) {
+void Solver::setG(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("G should be > 0, but it is {}", val)
@@ -91,11 +95,11 @@ void Solver::setG(float val) {
     g = val;
 }
 
-float Solver::getRHO() {
+double Solver::getRHO() {
     return rho;
 }
 
-void Solver::setRHO(float val) {
+void Solver::setRHO(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("RHO should be > 0, but it is {}", val)
@@ -105,11 +109,11 @@ void Solver::setRHO(float val) {
     rho = val;
 }
 
-float Solver::getKB() {
+double Solver::getKB() {
     return kb;
 }
 
-void Solver::setKB(float val) {
+void Solver::setKB(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("KB should be > 0, but it is {}", val)
@@ -119,11 +123,11 @@ void Solver::setKB(float val) {
     kb = val;
 }
 
-float Solver::getDX() {
+double Solver::getDX() {
     return dx;
 }
 
-void Solver::setDX(float val) {
+void Solver::setDX(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("DX should be > 0, but it is {}", val)
@@ -133,11 +137,11 @@ void Solver::setDX(float val) {
     dx = val;
 }
 
-float Solver::getDY() {
+double Solver::getDY() {
     return dy;
 }
 
-void Solver::setDY(float val) {
+void Solver::setDY(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("DY should be > 0, but it is {}", val)
@@ -147,11 +151,11 @@ void Solver::setDY(float val) {
     dy = val;
 }
 
-float Solver::getEndTime() {
+double Solver::getEndTime() {
     return endTime;
 }
 
-void Solver::setEndTime(float val) {
+void Solver::setEndTime(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("endTime should be > 0, but it is {}", val)
@@ -161,11 +165,11 @@ void Solver::setEndTime(float val) {
     endTime = val;
 }
 
-float Solver::getOutputTimeStep() {
+double Solver::getOutputTimeStep() {
     return outputTimeStep;
 }
 
-void Solver::setOutputTimeStep(float val) {
+void Solver::setOutputTimeStep(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("outputTimeStep should be > 0, but it is {}", val)
@@ -291,9 +295,9 @@ void Solver::loadKernelSources(cl::Program::Sources& sources) {
 
 void Solver::setInitialCondition(
     int nx, int ny, int nz,
-    vector<float>& uf, vector<float>& vf,
-    vector<float>& ua, vector<float>& va,
-    vector<float>& z
+    vector<double>& uf, vector<double>& vf,
+    vector<double>& ua, vector<double>& va,
+    vector<double>& z
 ) {
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -314,18 +318,61 @@ void Solver::setInitialCondition(
 }
 
 void Solver::writeData(
-    float t, int m,
+    double t, int m,
     int nx, int ny, int nz,
-    vector<float>& dz, 
-    vector<float>& h, vector<float>& z,
-    vector<float>& ua, vector<float>& va,
-    vector<float>& uf, vector<float>& vf,
-    vector<float>& qx, vector<float>& qy,
-    vector<float>& nu, Directories &dirs
+    vector<double>& dz, 
+    vector<double>& h, vector<double>& z,
+    vector<double>& ua, vector<double>& va,
+    vector<double>& uf, vector<double>& vf,
+    vector<double>& qx, vector<double>& qy,
+    vector<double>& nu, Directories &dirs
 ) {
     Writers::Surface::write(t, m, nx, ny, dx, dy, ua, va, qx, qy, z, dirs.surface);
     Writers::Volume::write(t, m, nx, ny, nz, dx, dy, dz, h, ua, va, uf, vf, dirs.volume);
     Writers::Volume::writeViscosity(t, m, nx, ny, nz + 1, dx, dy, dz, h, nu, dirs.viscosity);
+}
+
+double maxAbsResidual(
+    int nx, int ny, int nz,
+    vector<double>& al,
+    vector<double>& ac,
+    vector<double>& ar,
+    vector<double>& uf,
+    vector<double>& vf,
+    vector<double>& ud,
+    vector<double>& vd
+) {
+    double maxRes = 0;
+
+    for (int i = 0; i < nx; i++) {
+        for (int j = 0; j < ny; j++) {
+            int p = j + i * ny;
+
+            span<double> sl(al.data() + p * nz, nz);
+            span<double> sc(ac.data() + p * nz, nz);
+            span<double> sr(ar.data() + p * nz, nz);
+
+            span<double> suf(uf.data() + p * nz, nz);
+            span<double> svf(vf.data() + p * nz, nz);
+
+            span<double> sud(ud.data() + p * nz, nz);
+            span<double> svd(vd.data() + p * nz, nz);
+
+            Tridiagonal::residual(nz, sl, sc, sr, suf, sud);
+
+            for (int k = 0; k < nz; k++) {
+                maxRes = max(maxRes, abs(sud[k]));
+            }
+
+            Tridiagonal::residual(nz, sl, sc, sr, svf, svd);
+
+            for (int k = 0; k < nz; k++) {
+                maxRes = max(maxRes, abs(svd[k]));
+            }
+        }
+    }
+
+    return maxRes;
 }
 
 void Solver::solve() {
@@ -341,11 +388,11 @@ void Solver::solve() {
         ceil(geo.w / dy)
     ) + 1;
 
-    vector<float> dz = dzGenerator->generateDZ();
+    vector<double> dz = dzGenerator->generateDZ();
 
     int nz = dz.size();
 
-    vector<float> h = hGenerator->generateH(nx, ny);
+    vector<double> h = hGenerator->generateH(nx, ny);
 
     if (h.size() == 0) {
         throw runtime_error(
@@ -355,23 +402,27 @@ void Solver::solve() {
 
     auto [hMin, hMax] = Utils::Bathymetry::minMaxH(h, nx, ny);
 
-    float dzMin = *min_element(dz.begin(), dz.end());
+    double dzMin = *min_element(dz.begin(), dz.end());
 
-    const float dtMax = min(dx, dy) / sqrt(2 * g * hMax) / 1.5;
+    const double dtMax = min(dx, dy) / sqrt(2 * g * hMax) / 1.5;
 
-    vector<float> ua(nx * ny);
-    vector<float> u1a(nx * ny);
+    vector<double> ua(nx * ny);
+    vector<double> u1a(nx * ny);
 
-    vector<float> va(nx * ny);
-    vector<float> v1a(nx * ny);
+    vector<double> va(nx * ny);
+    vector<double> v1a(nx * ny);
 
-    vector<float> z(nx * ny);
+    vector<double> z(nx * ny);
 
-    vector<float> uf(nx * ny * nz);
-    vector<float> ud(nx * ny * nz);
+    vector<double> uf(nx * ny * nz);
+    vector<double> ud(nx * ny * nz);
 
-    vector<float> vf(nx * ny * nz);
-    vector<float> vd(nx * ny * nz);
+    vector<double> vf(nx * ny * nz);
+    vector<double> vd(nx * ny * nz);
+
+    vector<double> al(nx * ny * nz);
+    vector<double> ac(nx * ny * nz);
+    vector<double> ar(nx * ny * nz);
 
     setInitialCondition(
         nx, ny, nz, 
@@ -391,7 +442,7 @@ void Solver::solve() {
     int currentWindIndex = 0;
     Generators::Wind::Data currentWindData = windData[currentWindIndex];    
 
-    vector<float> nu = nuGenerator->generateNU(
+    vector<double> nu = nuGenerator->generateNU(
         nx, ny, nz + 1,
         dz, h,
         currentWindData.u10, currentWindData.v10,
@@ -399,27 +450,27 @@ void Solver::solve() {
         ua, va
     );
 
-    float nuMax = Utils::Viscosity::maxNU(nu, nx, ny, nz + 1);
+    double nuMax = Utils::Viscosity::maxNU(nu, nx, ny, nz + 1);
 
-    float dt = min(dtMax, hMin * dzMin * hMin * dzMin / 2 / nuMax);
-    float dtp = dt;
+    double dt = min(dtMax, hMin * dzMin * hMin * dzMin / 2 / nuMax);
+    double dtp = dt;
 
-    vector<float> zp(nx * ny);
+    vector<double> zp(nx * ny);
 
-    vector<float> up(nx * ny * nz);
-    vector<float> vp(nx * ny * nz);
+    vector<double> up(nx * ny * nz);
+    vector<double> vp(nx * ny * nz);
 
     Utils::Calc::updateData(nx, ny, zp, z);
     Utils::Calc::updateData(nx, ny, nz, up, uf);
     Utils::Calc::updateData(nx, ny, nz, vp, vf);
 
-    float t = 0;
-    float tn = outputTimeStep;
+    double t = 0;
+    double tn = outputTimeStep;
 
     int n = 1;
     int m = 0;
 
-    vector<tuple<int, float, long long, float, float, float>> statistics;
+    vector<tuple<int, double, long long, double, double, double>> statistics;
 
     Writers::Height::write(h, nx, ny, dx, dy, dirs.root);
 
@@ -461,50 +512,50 @@ void Solver::solve() {
         bool ok = true;
     }
 
-    cl::Buffer bufferV(context, CL_MEM_READ_WRITE, sizeof(float));
-    cl::Buffer bufferR(context, CL_MEM_READ_WRITE, sizeof(float) * nx);
-    cl::Buffer bufferP(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
+    cl::Buffer bufferV(context, CL_MEM_READ_WRITE, sizeof(double));
+    cl::Buffer bufferR(context, CL_MEM_READ_WRITE, sizeof(double) * nx);
+    cl::Buffer bufferP(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
 
-    cl::Buffer bufferDZ(context, CL_MEM_READ_WRITE, sizeof(float) * nz);
+    cl::Buffer bufferDZ(context, CL_MEM_READ_WRITE, sizeof(double) * nz);
 
-    cl::Buffer bufferH(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
-    cl::Buffer bufferQX(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
-    cl::Buffer bufferQY(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
-    cl::Buffer bufferZ(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
+    cl::Buffer bufferH(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
+    cl::Buffer bufferQX(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
+    cl::Buffer bufferQY(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
+    cl::Buffer bufferZ(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
 
-    cl::Buffer bufferUA(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
-    cl::Buffer bufferVA(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
-    cl::Buffer bufferU1A(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
-    cl::Buffer bufferV1A(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny);
+    cl::Buffer bufferUA(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
+    cl::Buffer bufferVA(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
+    cl::Buffer bufferU1A(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
+    cl::Buffer bufferV1A(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny);
 
-    cl::Buffer bufferNU(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * (nz + 1));
+    cl::Buffer bufferNU(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * (nz + 1));
 
-    cl::Buffer bufferUF(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
-    cl::Buffer bufferVF(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
+    cl::Buffer bufferUF(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
+    cl::Buffer bufferVF(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
 
-    cl::Buffer bufferUD(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
-    cl::Buffer bufferVD(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
+    cl::Buffer bufferUD(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
+    cl::Buffer bufferVD(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
 
-    cl::Buffer bufferAL(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
-    cl::Buffer bufferAC(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
-    cl::Buffer bufferAR(context, CL_MEM_READ_WRITE, sizeof(float) * nx * ny * nz);
+    cl::Buffer bufferAL(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
+    cl::Buffer bufferAC(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
+    cl::Buffer bufferAR(context, CL_MEM_READ_WRITE, sizeof(double) * nx * ny * nz);
 
     cl::CommandQueue queue(context, device);
 
-    err = queue.enqueueWriteBuffer(bufferDZ, CL_TRUE, 0, sizeof(float) * nz, dz.data());
+    err = queue.enqueueWriteBuffer(bufferDZ, CL_TRUE, 0, sizeof(double) * nz, dz.data());
 
-    err = queue.enqueueWriteBuffer(bufferH, CL_TRUE, 0, sizeof(float) * nx * ny, h.data());
-    err = queue.enqueueWriteBuffer(bufferQX, CL_TRUE, 0, sizeof(float) * nx * ny, currentWindData.qx.data());
-    err = queue.enqueueWriteBuffer(bufferQY, CL_TRUE, 0, sizeof(float) * nx * ny, currentWindData.qy.data());
-    err = queue.enqueueWriteBuffer(bufferZ, CL_TRUE, 0, sizeof(float) * nx * ny, z.data());
+    err = queue.enqueueWriteBuffer(bufferH, CL_TRUE, 0, sizeof(double) * nx * ny, h.data());
+    err = queue.enqueueWriteBuffer(bufferQX, CL_TRUE, 0, sizeof(double) * nx * ny, currentWindData.qx.data());
+    err = queue.enqueueWriteBuffer(bufferQY, CL_TRUE, 0, sizeof(double) * nx * ny, currentWindData.qy.data());
+    err = queue.enqueueWriteBuffer(bufferZ, CL_TRUE, 0, sizeof(double) * nx * ny, z.data());
 
-    err = queue.enqueueWriteBuffer(bufferUA, CL_TRUE, 0, sizeof(float) * nx * ny, ua.data());
-    err = queue.enqueueWriteBuffer(bufferVA, CL_TRUE, 0, sizeof(float) * nx * ny, va.data());
+    err = queue.enqueueWriteBuffer(bufferUA, CL_TRUE, 0, sizeof(double) * nx * ny, ua.data());
+    err = queue.enqueueWriteBuffer(bufferVA, CL_TRUE, 0, sizeof(double) * nx * ny, va.data());
 
-    err = queue.enqueueWriteBuffer(bufferNU, CL_TRUE, 0, sizeof(float) * nx * ny * (nz + 1), nu.data());
+    err = queue.enqueueWriteBuffer(bufferNU, CL_TRUE, 0, sizeof(double) * nx * ny * (nz + 1), nu.data());
 
-    err = queue.enqueueWriteBuffer(bufferUF, CL_TRUE, 0, sizeof(float) * nx * ny * nz, uf.data());
-    err = queue.enqueueWriteBuffer(bufferVF, CL_TRUE, 0, sizeof(float) * nx * ny * nz, vf.data());
+    err = queue.enqueueWriteBuffer(bufferUF, CL_TRUE, 0, sizeof(double) * nx * ny * nz, uf.data());
+    err = queue.enqueueWriteBuffer(bufferVF, CL_TRUE, 0, sizeof(double) * nx * ny * nz, vf.data());
 
     cl::Kernel updateUAKernel(program, "wind_induced_currents_davies85_variable_parameters_calc_ua");
 
@@ -677,7 +728,7 @@ void Solver::solve() {
         err = queue.enqueueNDRangeKernel(calcMaxRowKernel, cl::NullRange, rowRange, cl::NullRange);
         err = queue.enqueueNDRangeKernel(calcMaxKernel, cl::NullRange, valueRange, cl::NullRange);
 
-        err = queue.enqueueReadBuffer(bufferV, CL_TRUE, 0, sizeof(float), &nuMax);
+        err = queue.enqueueReadBuffer(bufferV, CL_TRUE, 0, sizeof(double), &nuMax);
 
         double dt1 = min(dtMax, hMin * dzMin * hMin * dzMin / 2 / nuMax);
 
@@ -693,8 +744,8 @@ void Solver::solve() {
             currentWindIndex += 1;
             currentWindData = windData[currentWindIndex];
 
-            err = queue.enqueueReadBuffer(bufferUA, CL_TRUE, 0, sizeof(float) * nx * ny, ua.data());
-            err = queue.enqueueReadBuffer(bufferVA, CL_TRUE, 0, sizeof(float) * nx * ny, va.data());
+            err = queue.enqueueReadBuffer(bufferUA, CL_TRUE, 0, sizeof(double) * nx * ny, ua.data());
+            err = queue.enqueueReadBuffer(bufferVA, CL_TRUE, 0, sizeof(double) * nx * ny, va.data());
 
             nu = nuGenerator->generateNU(
                 nx, ny, nz + 1, dz, h, 
@@ -703,7 +754,7 @@ void Solver::solve() {
                 ua, va
             );
 
-            err = queue.enqueueWriteBuffer(bufferNU, CL_TRUE, 0, sizeof(float) * nx * ny * (nz + 1), nu.data());
+            err = queue.enqueueWriteBuffer(bufferNU, CL_TRUE, 0, sizeof(double) * nx * ny * (nz + 1), nu.data());
         }
 
         if (t >= tn) {
@@ -713,12 +764,21 @@ void Solver::solve() {
 
             calcTime += duration;
 
-            err = queue.enqueueReadBuffer(bufferUA, CL_TRUE, 0, sizeof(float) * nx * ny, ua.data());
-            err = queue.enqueueReadBuffer(bufferVA, CL_TRUE, 0, sizeof(float) * nx * ny, va.data());
-            err = queue.enqueueReadBuffer(bufferZ, CL_TRUE, 0, sizeof(float) * nx * ny, z.data());
+            err = queue.enqueueNDRangeKernel(calcRHSKernel, cl::NullRange, volumeRange, cl::NullRange);
 
-            err = queue.enqueueReadBuffer(bufferUF, CL_TRUE, 0, sizeof(float) * nx * ny * nz, uf.data());
-            err = queue.enqueueReadBuffer(bufferVF, CL_TRUE, 0, sizeof(float) * nx * ny * nz, vf.data());
+            err = queue.enqueueReadBuffer(bufferUA, CL_TRUE, 0, sizeof(double) * nx * ny, ua.data());
+            err = queue.enqueueReadBuffer(bufferVA, CL_TRUE, 0, sizeof(double) * nx * ny, va.data());
+            err = queue.enqueueReadBuffer(bufferZ, CL_TRUE, 0, sizeof(double) * nx * ny, z.data());
+
+            err = queue.enqueueReadBuffer(bufferUF, CL_TRUE, 0, sizeof(double) * nx * ny * nz, uf.data());
+            err = queue.enqueueReadBuffer(bufferVF, CL_TRUE, 0, sizeof(double) * nx * ny * nz, vf.data());
+
+            err = queue.enqueueReadBuffer(bufferAL, CL_TRUE, 0, sizeof(double) * nx * ny * nz, al.data());
+            err = queue.enqueueReadBuffer(bufferAC, CL_TRUE, 0, sizeof(double) * nx * ny * nz, ac.data());
+            err = queue.enqueueReadBuffer(bufferAR, CL_TRUE, 0, sizeof(double) * nx * ny * nz, ar.data());
+
+            err = queue.enqueueReadBuffer(bufferUD, CL_TRUE, 0, sizeof(double) * nx * ny * nz, ud.data());
+            err = queue.enqueueReadBuffer(bufferVD, CL_TRUE, 0, sizeof(double) * nx * ny * nz, vd.data());
 
             writeData(
                 t, m, nx, ny, nz, 
@@ -732,9 +792,11 @@ void Solver::solve() {
             auto vmd = Utils::Calc::maxAbsDifference(nx, ny, nz, vp, vf);
             auto zmd = Utils::Calc::maxAbsDifference(nx, ny, zp, z);
 
+            auto maxRes = maxAbsResidual(nx, ny, nz, al, ac, ar, uf, vf, ud, vd);
+
             cout << format(
-                "Write data in file t={:.3f}, convergence of u={:.5f}, v={:.5f}, z={:.7f} with dt={:.5}, calc time={}",
-                t, umd, vmd, zmd, dt, calcTime / 1000
+                "Write data in file t={:.3f}, max_res = {}, diff u={:.5f}, v={:.5f}, z={} with dt={:.5}, calc time={}",
+                t, maxRes, umd, vmd, zmd, dt, calcTime / 1000
             ) << endl;
 
             statistics.push_back({ n, tn, calcTime / 1000, umd, vmd, zmd });

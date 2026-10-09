@@ -7,7 +7,7 @@
 using namespace std;
 
 namespace Utils::Bathymetry {
-	tuple<float, float> minMaxH(vector<float> &h, int nx, int ny);
+	tuple<double, double> minMaxH(vector<double> &h, int nx, int ny);
 }
 
 #endif

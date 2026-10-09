@@ -1,6 +1,7 @@
 #ifndef SLAE_DIRECT_TRIDIAGONAL_H
 #define SLAE_DIRECT_TRIDIAGONAL_H
 
+#include <span>
 #include <vector>
 
 using namespace std;
@@ -12,6 +13,15 @@ namespace SLAE::Direct::Tridiagonal {
         const double c, const double c0, const double c1, 
         const double r, const double r0, 
         vector<double> &d, vector<double> &u
+    );
+
+    void residual(int n, const span<double>& l, const span<double>& c, const span<double>& r, const span<double>& u, span<double>& d);
+    void residual(
+        int n,
+        const double l, const double l1,
+        const double c, const double c0, const double c1,
+        const double r, const double r0,
+        const span<double>& u, span<double>& d
     );
 
     int check(const vector<double>& l, const vector<double>& c, const vector<double>& r, vector<double>& d, vector<double>& u);

@@ -6,17 +6,17 @@
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Bathymetry {
 	class UniformGenerator : public IGenerator {
 		private:
-			float hm;
+			double hm;
 
 		public:
-			UniformGenerator(float hm);
+			UniformGenerator(double hm);
 
-			float getHM();
-			void setHM(float val);
+			double getHM();
+			void setHM(double val);
 
 			path createDirectory(path outDir) override;
 
-			vector<float> generateH(int nx, int ny) override;
+			vector<double> generateH(int nx, int ny) override;
 	};
 }
 

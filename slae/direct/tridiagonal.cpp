@@ -76,6 +76,46 @@ void SLAE::Direct::Tridiagonal::solve(
     calc(n, l, l1, c, c0, c1, r, r0, d, u);
 }
 
+void Tridiagonal::residual(int n, const span<double>& l, const span<double>& c, const span<double>& r, const span<double>& u, span<double>& d) {
+    if (n > 0) {
+        if (n == 1) {
+            d[0] -= c[0] * u[0];
+        }
+        else {
+            d[0] -= c[0] * u[0] + r[0] * u[1];
+
+            for (int i = 1; i < n - 1; i++) {
+                d[i] -= c[i] * u[i] + l[i] * u[i - 1] + r[i] * u[i + 1];
+            }
+
+            d[n - 1] -= c[n - 1] * u[n - 1] + l[n - 1] * u[n - 2];
+        }
+    }
+}
+
+void Tridiagonal::residual(
+    int n,
+    const double l, const double l1,
+    const double c, const double c0, const double c1,
+    const double r, const double r0,
+    const span<double>& u, span<double>& d
+) {
+    if (n > 0) {
+        if (n == 1) {
+            d[0] -= c0 * u[0];
+        }
+        else {
+            d[0] -= c0 * u[0] + r0 * u[1];
+
+            for (int i = 1; i < n - 1; i++) {
+                d[i] -= c * u[i] + l * u[i - 1] + r * u[i + 1];
+            }
+
+            d[n - 1] -= c1 * u[n - 1] + l1 * u[n - 2];
+        }
+    }
+}
+
 int Tridiagonal::check(const vector<double> &l, const vector<double> &c, const vector<double> &r, vector<double> &d, vector<double> &u) {
     int n = c.size();
 

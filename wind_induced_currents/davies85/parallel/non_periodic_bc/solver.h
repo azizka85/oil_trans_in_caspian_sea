@@ -25,18 +25,18 @@ namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC {
 
     class Solver {
         private:
-            float b;
+            double b;
 
-            float f;
-            float g;
-            float rho;
-            float kb;            
+            double f;
+            double g;
+            double rho;
+            double kb;            
 
-            float dx;
-            float dy;
+            double dx;
+            double dy;
 
-            float endTime;
-            float outputTimeStep;
+            double endTime;
+            double outputTimeStep;
             string outDir;
 
             unique_ptr<Generators::Area::IGenerator> areaGenerator;
@@ -51,31 +51,31 @@ namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC {
 
             void setInitialCondition(
                 int nx, int ny, int nz,
-                vector<float>& uf,
-                vector<float>& vf,
-                vector<float>& ua,
-                vector<float>& va,
-                vector<float>& z
+                vector<double>& uf,
+                vector<double>& vf,
+                vector<double>& ua,
+                vector<double>& va,
+                vector<double>& z
             );
 
             void writeData(
-                float t, int m,
+                double t, int m,
                 int nx, int ny, int nz,
-                vector<float>& dz, 
-                vector<float>& h, vector<float>& z,
-                vector<float>& ua, vector<float>& va,                 
-                vector<float>& uf, vector<float>& vf,
-                vector<float>& qx, vector<float>& qy,
-                vector<float>& nu,
+                vector<double>& dz, 
+                vector<double>& h, vector<double>& z,
+                vector<double>& ua, vector<double>& va,                 
+                vector<double>& uf, vector<double>& vf,
+                vector<double>& qx, vector<double>& qy,
+                vector<double>& nu,
                 Directories &dirs
             );
 
         public:
             Solver(
-                float b,
-                float f, float g, float rho, float kb,                
-                float dx, float dy,
-                float endTime, float outputTimeStep, string outDir,
+                double b,
+                double f, double g, double rho, double kb,                
+                double dx, double dy,
+                double endTime, double outputTimeStep, string outDir,
                 unique_ptr<Generators::Area::IGenerator> areaGenerator,
                 unique_ptr<Generators::DZ::IGenerator> dzGenerator,                
                 unique_ptr<Generators::Bathymetry::IGenerator> hGenerator,
@@ -83,32 +83,32 @@ namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC {
                 unique_ptr<Generators::Viscosity::IGenerator> nuGenerator
             );
 
-            float getB();
-            void setB(float val);
+            double getB();
+            void setB(double val);
 
-            float getF();
-            void setF(float val);
+            double getF();
+            void setF(double val);
 
-            float getG();
-            void setG(float val);
+            double getG();
+            void setG(double val);
 
-            float getRHO();
-            void setRHO(float val);
+            double getRHO();
+            void setRHO(double val);
 
-            float getKB();
-            void setKB(float val);            
+            double getKB();
+            void setKB(double val);            
 
-            float getDX();
-            void setDX(float val);
+            double getDX();
+            void setDX(double val);
 
-            float getDY();
-            void setDY(float val);
+            double getDY();
+            void setDY(double val);
 
-            float getEndTime();
-            void setEndTime(float val);
+            double getEndTime();
+            void setEndTime(double val);
 
-            float getOutputTimeStep();
-            void setOutputTimeStep(float val);
+            double getOutputTimeStep();
+            void setOutputTimeStep(double val);
 
             string getOutDir();
             void setOutDir(string val);

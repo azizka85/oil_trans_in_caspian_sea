@@ -6,34 +6,34 @@
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Viscosity {
 	class LinearGenerator : public IGenerator {
 	private:
-		float ht;
+		double ht;
 
-		float nus;
-		float nut;
+		double nus;
+		double nut;
 
 	public:
 		LinearGenerator(
-			float ht, 
-			float nus, float nut
+			double ht, 
+			double nus, double nut
 		);
 
-		float getHT();
-		void setHT(float val);
+		double getHT();
+		void setHT(double val);
 
-		float getNUS();
-		void setNUS(float val);
+		double getNUS();
+		void setNUS(double val);
 
-		float getNUT();
-		void setNUT(float val);
+		double getNUT();
+		void setNUT(double val);
 
 		path createDirectory(path outDir) override;
 
-		vector<float> generateNU(
+		vector<double> generateNU(
 			int nx, int ny, int nz,
-			vector<float>& dz, vector<float>& h,
-			vector<float>& u10, vector<float>& v10,
-			vector<float>& qx, vector<float>& qy,
-			vector<float>& ua, vector<float>& va
+			vector<double>& dz, vector<double>& h,
+			vector<double>& u10, vector<double>& v10,
+			vector<double>& qx, vector<double>& qy,
+			vector<double>& ua, vector<double>& va
 		) override;
 	};
 }

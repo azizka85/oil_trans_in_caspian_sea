@@ -1,20 +1,20 @@
 #include <opencl/slae/direct/tridiagonal.cl>
 
 __kernel void wind_induced_currents_davies85_variable_parameters_calc_ua(
-    float f,
-    float kb,
-    float g,
-    float rho,
-    float dx,    
-    float dt,
+    double f,
+    double kb,
+    double g,
+    double rho,
+    double dx,    
+    double dt,
     int nx, int ny, int nz,
-    __global const float* h,
-    __global const float* qx,
-    __global const float* ua,
-    __global const float* va,
-    __global const float* z,
-    __global const float* uf,
-    __global float* u1a
+    __global const double* h,
+    __global const double* qx,
+    __global const double* ua,
+    __global const double* va,
+    __global const double* z,
+    __global const double* uf,
+    __global double* u1a
 ) {
     int i = get_global_id(0);
     int j = get_global_id(1);
@@ -36,20 +36,20 @@ __kernel void wind_induced_currents_davies85_variable_parameters_calc_ua(
 }
 
 __kernel void wind_induced_currents_davies85_variable_parameters_calc_va(
-    float f,
-    float kb,
-    float g,
-    float rho,
-    float dy,    
-    float dt,
+    double f,
+    double kb,
+    double g,
+    double rho,
+    double dy,    
+    double dt,
     int nx, int ny, int nz,
-    __global const float* h,
-    __global const float* qy,
-    __global const float* ua,
-    __global const float* va,
-    __global const float* z,
-    __global const float* vf,
-    __global float* v1a
+    __global const double* h,
+    __global const double* qy,
+    __global const double* ua,
+    __global const double* va,
+    __global const double* z,
+    __global const double* vf,
+    __global double* v1a
 ) {
     int i = get_global_id(0);
     int j = get_global_id(1);
@@ -70,25 +70,25 @@ __kernel void wind_induced_currents_davies85_variable_parameters_calc_va(
 }
 
 __kernel void wind_induced_currents_davies85_variable_parameters_calc_rhs(
-    float f,
-    float kb,
-    float rho,
-    float dx, float dy,    
-    float dt,
+    double f,
+    double kb,
+    double rho,
+    double dx, double dy,    
+    double dt,
     int ny, int nz,
-    __global const float* nu,
-    __global const float* dz,
-    __global const float* h,
-    __global const float* qx,
-    __global const float* qy,
-    __global const float* ua,
-    __global const float* u1a,
-    __global const float* va,
-    __global const float* v1a,
-    __global const float* uf,
-    __global const float* vf,
-    __global float* ud,
-    __global float* vd
+    __global const double* nu,
+    __global const double* dz,
+    __global const double* h,
+    __global const double* qx,
+    __global const double* qy,
+    __global const double* ua,
+    __global const double* u1a,
+    __global const double* va,
+    __global const double* v1a,
+    __global const double* uf,
+    __global const double* vf,
+    __global double* ud,
+    __global double* vd
 ) {
     int i = get_global_id(0);
     int j = get_global_id(1);
@@ -105,8 +105,8 @@ __kernel void wind_induced_currents_davies85_variable_parameters_calc_rhs(
         int idb = nz - 1 + p*nz;
 
         if (k == 0) {
-            float um1 = uf[id] + h[p]*qx[p]*dz[k]/rho/nu[id];
-            float vm1 = vf[id] + h[p]*qy[p]*dz[k]/rho/nu[id];
+            double um1 = uf[id] + h[p]*qx[p]*dz[k]/rho/nu[id];
+            double vm1 = vf[id] + h[p]*qy[p]*dz[k]/rho/nu[id];
 
             ud[id] = uf[id] + f*vf[id]*dt + dt*(
                 nu[idu]*(uf[idu] - uf[id])/(dz[k+1] + dz[k]) - 
@@ -120,12 +120,12 @@ __kernel void wind_induced_currents_davies85_variable_parameters_calc_rhs(
             )/h[p]/h[p]/dz[k] + kb*(vf[idb] + va[p])*dt/h[p] - qy[p]*dt/rho/h[p]
             + dt*qy[p]/rho/h[p]/2/dz[k];
         } else if (k == nz-1) {
-            float un = (
+            double un = (
                 uf[id] - kb*h[p]*dz[k]*uf[id]/2/nu[idu] 
                 - kb*h[p]*dz[k]*ua[p]/nu[idu]
             )/(1 + kb*h[p]*dz[k]/2/nu[idu]);
 
-            float vn = (
+            double vn = (
                 vf[id] - kb*h[p]*dz[k]*vf[id]/2/nu[idu] 
                 - kb*h[p]*dz[k]*va[p]/nu[idu]
             )/(1 + kb*h[p]*dz[k]/2/nu[idu]);
@@ -142,8 +142,8 @@ __kernel void wind_induced_currents_davies85_variable_parameters_calc_rhs(
             )/h[p]/h[p]/dz[k] + kb*(vf[idb] + va[p])*dt/h[p] - qy[p]*dt/rho/h[p]
             - dt*kb*va[p]/h[p]/2/dz[k]/(1 + kb*h[p]*dz[k]/2/nu[idu]);
         } else {
-            float u = uf[idb] + ua[p];
-            float v = vf[idb] + va[p];
+            double u = uf[idb] + ua[p];
+            double v = vf[idb] + va[p];
 
             ud[id] = uf[id] + f*vf[id]*dt + dt*(
                 nu[idu]*(uf[idu] - uf[id])/(dz[k+1] + dz[k]) - 
@@ -159,14 +159,14 @@ __kernel void wind_induced_currents_davies85_variable_parameters_calc_rhs(
 }
 
 __kernel void wind_induced_currents_davies85_variable_parameters_create_tridiagonal_matrix(
-    float kb, float dt,
+    double kb, double dt,
     int ny, int nz,
-    __global const float* nu,
-    __global const float* dz,
-    __global const float* h,
-    __global float* al,
-    __global float* ac,
-    __global float* ar
+    __global const double* nu,
+    __global const double* dz,
+    __global const double* h,
+    __global double* al,
+    __global double* ac,
+    __global double* ar
 ) {
     int i = get_global_id(0);
     int j = get_global_id(1);
@@ -200,14 +200,14 @@ __kernel void wind_induced_currents_davies85_variable_parameters_create_tridiago
 
 __kernel void wind_induced_currents_davies85_variable_parameters_calc_uvf(
     int ny, int nz,
-    __global const float* h,
-    __global const float* al,
-    __global const float* ac,
-    __global const float* ar,
-    __global float* uf,
-    __global float* vf,
-    __global float* ud,
-    __global float* vd
+    __global const double* h,
+    __global const double* al,
+    __global const double* ac,
+    __global const double* ar,
+    __global double* uf,
+    __global double* vf,
+    __global double* ud,
+    __global double* vd
 ) {
     int i = get_global_id(0);
     int j = get_global_id(1);
@@ -232,12 +232,12 @@ __kernel void wind_induced_currents_davies85_variable_parameters_calc_uvf(
 }
 
 __kernel void wind_induced_currents_davies85_variable_parameters_calc_z(
-    float dx, float dy,
+    double dx, double dy,
     int nx, int ny, int nz,
-    __global const float* h,
-    __global const float* ua,
-    __global const float* va,
-    __global float* z
+    __global const double* h,
+    __global const double* ua,
+    __global const double* va,
+    __global double* z
 ) {
     int i = get_global_id(0);
     int j = get_global_id(1);

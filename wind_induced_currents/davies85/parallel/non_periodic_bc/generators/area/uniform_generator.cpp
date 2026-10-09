@@ -10,16 +10,16 @@ using namespace Utils;
 
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Area;
 
-UniformGenerator::UniformGenerator(float w, float l) {
+UniformGenerator::UniformGenerator(double w, double l) {
     setW(w);
     setL(l);
 }
 
-float UniformGenerator::getW() {
+double UniformGenerator::getW() {
     return w;
 }
 
-void UniformGenerator::setW(float val) {
+void UniformGenerator::setW(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("W should be > 0, but it is {}", val)
@@ -29,11 +29,11 @@ void UniformGenerator::setW(float val) {
     w = val;
 }
 
-float UniformGenerator::getL() {
+double UniformGenerator::getL() {
     return l;
 }
 
-void UniformGenerator::setL(float val) {
+void UniformGenerator::setL(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("L should be > 0, but it is {}", val)

@@ -6,7 +6,7 @@
 
 using namespace Utils;
 
-float Calc::adjustTimeStep(float b, float t, float dt, float tMax, float dtMax, bool mult) {
+double Calc::adjustTimeStep(double b, double t, double dt, double tMax, double dtMax, bool mult) {
     if (dt >= dtMax) {
         return dtMax;
     }
@@ -16,7 +16,7 @@ float Calc::adjustTimeStep(float b, float t, float dt, float tMax, float dtMax, 
     }
 
     if (mult) {
-        float dtp = b * dt;
+        double dtp = b * dt;
 
         if (dtp > dtMax) {
             return dtMax;
@@ -29,8 +29,8 @@ float Calc::adjustTimeStep(float b, float t, float dt, float tMax, float dtMax, 
     return dt;
 }
 
-float Calc::maxAbsDifference(int nx, int ny, vector<float>& u, vector<float>& u1) {
-    float maxDiff = 0.;
+double Calc::maxAbsDifference(int nx, int ny, vector<double>& u, vector<double>& u1) {
+    double maxDiff = 0.;
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -46,8 +46,8 @@ float Calc::maxAbsDifference(int nx, int ny, vector<float>& u, vector<float>& u1
     return maxDiff;
 }
 
-float Calc::maxAbsDifference(int nx, int ny, int nz, vector<float>& u, vector<float>& u1) {
-    float maxDiff = 0.;
+double Calc::maxAbsDifference(int nx, int ny, int nz, vector<double>& u, vector<double>& u1) {
+    double maxDiff = 0.;
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
@@ -67,7 +67,7 @@ float Calc::maxAbsDifference(int nx, int ny, int nz, vector<float>& u, vector<fl
     return maxDiff;
 }
 
-void Calc::updateData(int nx, int ny, vector<float>& u, vector<float>& u1) {
+void Calc::updateData(int nx, int ny, vector<double>& u, vector<double>& u1) {
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
             int p = j + i * ny;
@@ -77,7 +77,7 @@ void Calc::updateData(int nx, int ny, vector<float>& u, vector<float>& u1) {
     }
 }
 
-void Calc::updateData(int nx, int ny, int nz, vector<float>& u, vector<float>& u1) {
+void Calc::updateData(int nx, int ny, int nz, vector<double>& u, vector<double>& u1) {
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
             int p = j + i * ny;
@@ -91,9 +91,9 @@ void Calc::updateData(int nx, int ny, int nz, vector<float>& u, vector<float>& u
     }
 }
 
-tuple<float, float, float, float> Calc::project(
-    float latMin, float latMax,
-    float lonMin, float lonMax
+tuple<double, double, double, double> Calc::project(
+    double latMin, double latMax,
+    double lonMin, double lonMax
 ) {
     unique_ptr<PJ_CONTEXT, PJ_CONTEXT* (*)(PJ_CONTEXT*)> ctx(
         proj_context_create(),
@@ -108,38 +108,38 @@ tuple<float, float, float, float> Calc::project(
     PJ_COORD coord = proj_coord(latMin, lonMin, 0, 0);
     PJ_COORD utm = proj_trans(transformer.get(), PJ_FWD, coord);
 
-    float minX = utm.xy.x;
-    float maxX = utm.xy.x;
+    double minX = utm.xy.x;
+    double maxX = utm.xy.x;
 
-    float minY = utm.xy.y;
-    float maxY = utm.xy.y;
+    double minY = utm.xy.y;
+    double maxY = utm.xy.y;
 
     coord = proj_coord(latMin, lonMax, 0, 0);
     utm = proj_trans(transformer.get(), PJ_FWD, coord);
 
-    minX = min(minX, (float)utm.xy.x);
-    maxX = max(maxX, (float)utm.xy.x);
+    minX = min(minX, (double)utm.xy.x);
+    maxX = max(maxX, (double)utm.xy.x);
 
-    minY = min(minY, (float)utm.xy.y);
-    maxY = max(maxY, (float)utm.xy.y);
+    minY = min(minY, (double)utm.xy.y);
+    maxY = max(maxY, (double)utm.xy.y);
 
     coord = proj_coord(latMax, lonMin, 0, 0);
     utm = proj_trans(transformer.get(), PJ_FWD, coord);
 
-    minX = min(minX, (float)utm.xy.x);
-    maxX = max(maxX, (float)utm.xy.x);
+    minX = min(minX, (double)utm.xy.x);
+    maxX = max(maxX, (double)utm.xy.x);
 
-    minY = min(minY, (float)utm.xy.y);
-    maxY = max(maxY, (float)utm.xy.y);
+    minY = min(minY, (double)utm.xy.y);
+    maxY = max(maxY, (double)utm.xy.y);
 
     coord = proj_coord(latMax, lonMax, 0, 0);
     utm = proj_trans(transformer.get(), PJ_FWD, coord);
 
-    minX = min(minX, (float)utm.xy.x);
-    maxX = max(maxX, (float)utm.xy.x);
+    minX = min(minX, (double)utm.xy.x);
+    maxX = max(maxX, (double)utm.xy.x);
 
-    minY = min(minY, (float)utm.xy.y);
-    maxY = max(maxY, (float)utm.xy.y);
+    minY = min(minY, (double)utm.xy.y);
+    maxY = max(maxY, (double)utm.xy.y);
 
     return {
         minX, maxX,

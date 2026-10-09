@@ -21,6 +21,7 @@ add_executable(wind_induced_currents_davies_85_parallel_non_periodic_bc
     generators/dz/triple_point_generator.cpp
 
     generators/bathymetry/uniform_generator.cpp
+    generators/bathymetry/cosine_generator.cpp
     generators/bathymetry/gebco_generator.cpp
 
     generators/wind/uniform_generator.cpp
@@ -41,6 +42,7 @@ target_add_manifest(wind_induced_currents_davies_85_parallel_non_periodic_bc)
 
 target_link_libraries(wind_induced_currents_davies_85_parallel_non_periodic_bc PRIVATE
     utils
+    slae
     OpenCL::OpenCL
     netCDF::netcdf netCDF::netcdf-cxx4
     PROJ::proj

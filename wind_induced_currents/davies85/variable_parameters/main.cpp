@@ -20,7 +20,7 @@ int main() {
     const GenerateNU nug = GenerateNU::LinearNU;
 
     const double hm = 260;
-    const GenerateH hg = GenerateH::UniformH;
+    const GenerateH hg = GenerateH::CosineH;
 
     const double w = 260;
     const double l = 260;

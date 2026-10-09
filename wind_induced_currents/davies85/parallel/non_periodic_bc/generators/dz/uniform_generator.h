@@ -6,17 +6,17 @@
 namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::DZ {
 	class UniformGenerator : public IGenerator {
 		private:
-			float dzm;
+			double dzm;
 
 		public:
-			UniformGenerator(float dzm);
+			UniformGenerator(double dzm);
 
-			float getDZM();
-			void setDZM(float val);
+			double getDZM();
+			void setDZM(double val);
 
 			path createDirectory(path outDir) override;
 
-			vector<float> generateDZ() override;
+			vector<double> generateDZ() override;
 	};
 }
 

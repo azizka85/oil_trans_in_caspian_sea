@@ -1,8 +1,12 @@
+#define _USE_MATH_DEFINES
+
+#include <cmath>
+
 #include <stdexcept>
 
 #include <utils/fs.h>
 
-#include "uniform_generator.h"
+#include "cosine_generator.h"
 
 using namespace std;
 
@@ -10,15 +14,15 @@ using namespace Utils;
 
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Bathymetry;
 
-UniformGenerator::UniformGenerator(double hm) {
-	setHM(hm);
+CosineGenerator::CosineGenerator(double hm) {
+    setHM(hm);
 }
 
-double UniformGenerator::getHM() {
+double CosineGenerator::getHM() {
     return hm;
 }
 
-void UniformGenerator::setHM(double val) {
+void CosineGenerator::setHM(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("HM should be > 0, but it is {}", val)
@@ -28,7 +32,7 @@ void UniformGenerator::setHM(double val) {
     hm = val;
 }
 
-path UniformGenerator::createDirectory(path outDir) {
+path CosineGenerator::createDirectory(path outDir) {
     return FS::createDirByPath(
         outDir / path(
             format("UH, h={}", hm)
@@ -36,14 +40,14 @@ path UniformGenerator::createDirectory(path outDir) {
     );
 }
 
-vector<double> UniformGenerator::generateH(int nx, int ny) {
+vector<double> CosineGenerator::generateH(int nx, int ny) {
     vector<double> h(nx * ny);
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
             int id = j + i * ny;
 
-            h[id] = hm;
+            h[id] = hm * (1 - 0.8 * cos(2 * M_PI * (i / (nx - 1.) + j / (ny - 1.)))) / 2;
         }
     }
 

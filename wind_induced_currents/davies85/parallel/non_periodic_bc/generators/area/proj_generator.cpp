@@ -12,22 +12,22 @@ using namespace Utils;
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Area;
 
 ProjGenerator::ProjGenerator(
-	float latMin, float latMax,
-	float lonMin, float lonMax
+	double latMin, double latMax,
+	double lonMin, double lonMax
 ) {
 	setLatMinMax(latMin, latMax);
 	setLonMinMax(lonMin, lonMax);
 }
 
-float ProjGenerator::getLatMin() {
+double ProjGenerator::getLatMin() {
     return latMin;
 }
 
-float ProjGenerator::getLatMax() {
+double ProjGenerator::getLatMax() {
     return latMax;
 }
 
-void ProjGenerator::setLatMinMax(float latMin, float latMax) {
+void ProjGenerator::setLatMinMax(double latMin, double latMax) {
     if (latMin >= latMax) {
         throw runtime_error(
             format("LatMin should be < LatMax, but LatMin={} and LatMax={}", latMin, latMax)
@@ -38,15 +38,15 @@ void ProjGenerator::setLatMinMax(float latMin, float latMax) {
     this->latMax = latMax;
 }
 
-float ProjGenerator::getLonMin() {
+double ProjGenerator::getLonMin() {
     return lonMin;
 }
 
-float ProjGenerator::getLonMax() {
+double ProjGenerator::getLonMax() {
     return lonMax;
 }
 
-void ProjGenerator::setLonMinMax(float lonMin, float lonMax) {
+void ProjGenerator::setLonMinMax(double lonMin, double lonMax) {
     if (lonMin >= lonMax) {
         throw runtime_error(
             format("LonMin should be < LonMax, but LonMin={} and LonMax={}", lonMin, lonMax)

@@ -13,12 +13,12 @@ namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Vi
 	public:
 		virtual path createDirectory(path outDir) = 0;
 
-		virtual vector<float> generateNU(
+		virtual vector<double> generateNU(
 			int nx, int ny, int nz,
-			vector<float>& dz, vector<float>& h,
-			vector<float>& u10, vector<float>& v10,
-			vector<float> &qx, vector<float>& qy,
-			vector<float> &ua, vector<float> &va
+			vector<double>& dz, vector<double>& h,
+			vector<double>& u10, vector<double>& v10,
+			vector<double> &qx, vector<double>& qy,
+			vector<double> &ua, vector<double> &va
 		) = 0;
 	};
 }

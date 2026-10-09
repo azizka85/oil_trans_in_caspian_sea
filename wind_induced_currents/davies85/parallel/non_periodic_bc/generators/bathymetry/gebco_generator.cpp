@@ -22,9 +22,9 @@ using namespace Utils;
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Bathymetry;
 
 GEBCOGenerator::GEBCOGenerator(
-    float latMin, float latMax,
-    float lonMin, float lonMax,
-    float refDepth, float minDepth,
+    double latMin, double latMax,
+    double lonMin, double lonMax,
+    double refDepth, double minDepth,
     string filePath
 ) {
     setLatMinMax(latMin, latMax);
@@ -36,15 +36,15 @@ GEBCOGenerator::GEBCOGenerator(
     setFilePath(filePath);
 }
 
-float GEBCOGenerator::getLatMin() {
+double GEBCOGenerator::getLatMin() {
     return latMin;
 }
 
-float GEBCOGenerator::getLatMax() {
+double GEBCOGenerator::getLatMax() {
     return latMax;
 }
 
-void GEBCOGenerator::setLatMinMax(float latMin, float latMax) {
+void GEBCOGenerator::setLatMinMax(double latMin, double latMax) {
     if (latMin >= latMax) {
         throw runtime_error(
             format("LatMin should be < LatMax, but LatMin={} and LatMax={}", latMin, latMax)
@@ -55,15 +55,15 @@ void GEBCOGenerator::setLatMinMax(float latMin, float latMax) {
     this->latMax = latMax;
 }
 
-float GEBCOGenerator::getLonMin() {
+double GEBCOGenerator::getLonMin() {
     return lonMin;
 }
 
-float GEBCOGenerator::getLonMax() {
+double GEBCOGenerator::getLonMax() {
     return lonMax;
 }
 
-void GEBCOGenerator::setLonMinMax(float lonMin, float lonMax) {
+void GEBCOGenerator::setLonMinMax(double lonMin, double lonMax) {
     if (lonMin >= lonMax) {
         throw runtime_error(
             format("LonMin should be < LonMax, but LonMin={} and LonMax={}", lonMin, lonMax)
@@ -74,19 +74,19 @@ void GEBCOGenerator::setLonMinMax(float lonMin, float lonMax) {
     this->lonMax = lonMax;
 }
 
-float GEBCOGenerator::getRefDepth() {
+double GEBCOGenerator::getRefDepth() {
     return refDepth;
 }
 
-void GEBCOGenerator::setRefDepth(float val) {
+void GEBCOGenerator::setRefDepth(double val) {
     refDepth = val;
 }
 
-float GEBCOGenerator::getMinDepth() {
+double GEBCOGenerator::getMinDepth() {
     return minDepth;
 }
 
-void GEBCOGenerator::setMinDepth(float val) {
+void GEBCOGenerator::setMinDepth(double val) {
     if (val < 0) {
         throw runtime_error(
             format("MinDepth should be >= 0, but it is {}", val)
@@ -118,38 +118,38 @@ path GEBCOGenerator::createDirectory(path outDir) {
     );
 }
 
-vector<float> GEBCOGenerator::generateH(int nx, int ny) {
+vector<double> GEBCOGenerator::generateH(int nx, int ny) {
     if (nx <= 1 && ny <= 1) {
-        return vector<float>();
+        return vector<double>();
     }
 
     NcFile bathymetryFile(filePath, NcFile::read);
 
     NcVar latVar = bathymetryFile.getVar("lat");
     size_t latSize = latVar.getDim(0).getSize();
-    vector<float> lats(latSize);
+    vector<double> lats(latSize);
 
     latVar.getVar(lats.data());
 
-    float latStep = lats.size() > 1 ? lats[1] - lats[0] : 0;
+    double latStep = lats.size() > 1 ? lats[1] - lats[0] : 0;
 
     NcVar lonVar = bathymetryFile.getVar("lon");
     size_t lonSize = lonVar.getDim(0).getSize();
-    vector<float> lons(lonSize);
+    vector<double> lons(lonSize);
 
     lonVar.getVar(lons.data());
 
-    float lonStep = lons.size() > 1 ? lons[1] - lons[0] : 0;
+    double lonStep = lons.size() > 1 ? lons[1] - lons[0] : 0;
 
     NcVar elevVar = bathymetryFile.getVar("elevation");
-    vector<float> elevations(latSize * lonSize);
+    vector<double> elevations(latSize * lonSize);
 
     elevVar.getVar(elevations.data());
 
     auto [minX, maxX, minY, maxY] = Calc::project(latMin, latMax, lonMin, lonMax);
 
-    float dx = (maxX - minX) / (nx - 1);
-    float dy = (maxY - minY) / (ny - 1);
+    double dx = (maxX - minX) / (nx - 1);
+    double dy = (maxY - minY) / (ny - 1);
 
     unique_ptr<PJ_CONTEXT, PJ_CONTEXT* (*)(PJ_CONTEXT*)> ctx(
         proj_context_create(),
@@ -168,7 +168,7 @@ vector<float> GEBCOGenerator::generateH(int nx, int ny) {
         lons.front(), lats.front()
     );
 
-    vector<float> depths(nx * ny);
+    vector<double> depths(nx * ny);
 
     double epsilon = 0.003;
 
@@ -176,8 +176,8 @@ vector<float> GEBCOGenerator::generateH(int nx, int ny) {
         for (int j = 0; j < ny; j++) {
             int p = j + i * ny;
 
-            float x = minX + dx * i;
-            float y = minY + dy * j;
+            double x = minX + dx * i;
+            double y = minY + dy * j;
 
             PJ_COORD coord = proj_coord(x, y, 0, 0);
             PJ_COORD geo = proj_trans(transformer.get(), PJ_INV, coord);
@@ -193,7 +193,7 @@ vector<float> GEBCOGenerator::generateH(int nx, int ny) {
                 geo.lp.lam >= lats.front() + epsilon && geo.lp.lam <= lats.back() - epsilon &&
                 geo.lp.phi >= lons.front() + epsilon && geo.lp.phi <= lons.back() - epsilon
             ) {
-                float elevation = interpFunc(geo.lp.phi, geo.lp.lam);
+                double elevation = interpFunc(geo.lp.phi, geo.lp.lam);
 
                 if (elevation < refDepth - minDepth) {
                     depths[p] = abs(elevation - refDepth);

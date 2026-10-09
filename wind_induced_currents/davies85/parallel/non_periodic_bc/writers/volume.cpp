@@ -7,12 +7,12 @@ using namespace Utils;
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Writers;
 
 void Volume::write(
-    float t, int m,
+    double t, int m,
     int nx, int ny, int nz,
-    float dx, float dy,
-    vector<float>& dz, vector<float>& h,
-    vector<float>& ua, vector<float>& va,
-    vector<float>& uf, vector<float>& vf,
+    double dx, double dy,
+    vector<double>& dz, vector<double>& h,
+    vector<double>& ua, vector<double>& va,
+    vector<double>& uf, vector<double>& vf,
     path outDir
 ) {
     auto file = FS::createFileByPath(
@@ -27,15 +27,15 @@ void Volume::write(
     file << "ASCII" << endl;
     file << "DATASET STRUCTURED_GRID" << endl;
     file << format("DIMENSIONS {} {} {}", nx, ny, nz) << endl;
-    file << format("POINTS {} float", nx * ny * nz) << endl;
+    file << format("POINTS {} double", nx * ny * nz) << endl;
 
-    vector<vector<float>> z(nx, vector<float>(ny, 0));
+    vector<vector<double>> z(nx, vector<double>(ny, 0));
 
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
             for (int i = 0; i < nx; i++) {
-                float x = dx * i;
-                float y = dy * j;
+                double x = dx * i;
+                double y = dy * j;
 
                 int p = j + i * ny;
 
@@ -49,11 +49,11 @@ void Volume::write(
     }
 
     file << "FIELD FieldData 1" << endl;
-    file << "Time 1 1 float" << endl;
+    file << "Time 1 1 double" << endl;
     file << format("{:.3f}", t) << endl;
     file << format("POINT_DATA {}", nx * ny * nz) << endl;
 
-    file << "VECTORS V float" << endl;
+    file << "VECTORS V double" << endl;
 
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
@@ -68,11 +68,11 @@ void Volume::write(
 }
 
 void Volume::writeViscosity(
-    float t, int m, 
+    double t, int m, 
     int nx, int ny, int nz, 
-    float dx, float dy, 
-    vector<float>& dz, vector<float>& h, 
-    vector<float>& nu, 
+    double dx, double dy, 
+    vector<double>& dz, vector<double>& h, 
+    vector<double>& nu, 
     path outDir
 ) {
     auto file = FS::createFileByPath(
@@ -87,15 +87,15 @@ void Volume::writeViscosity(
     file << "ASCII" << endl;
     file << "DATASET STRUCTURED_GRID" << endl;
     file << format("DIMENSIONS {} {} {}", nx, ny, nz) << endl;
-    file << format("POINTS {} float", nx * ny * nz) << endl;
+    file << format("POINTS {} double", nx * ny * nz) << endl;
 
-    vector<vector<float>> z(nx, vector<float>(ny, 0));
+    vector<vector<double>> z(nx, vector<double>(ny, 0));
 
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
             for (int i = 0; i < nx; i++) {
-                float x = dx * i;
-                float y = dy * j;
+                double x = dx * i;
+                double y = dy * j;
 
                 file << format("{:.3f} {:.3f} {:.3f}", x, y, z[i][j]) << endl;
 
@@ -109,11 +109,11 @@ void Volume::writeViscosity(
     }
 
     file << "FIELD FieldData 1" << endl;
-    file << "Time 1 1 float" << endl;
+    file << "Time 1 1 double" << endl;
     file << format("{:.3f}", t) << endl;
     file << format("POINT_DATA {}", nx * ny * nz) << endl;
 
-    file << "SCALARS nu float" << endl;
+    file << "SCALARS nu double" << endl;
     file << "LOOKUP_TABLE default" << endl;
 
     for (int k = 0; k < nz; k++) {

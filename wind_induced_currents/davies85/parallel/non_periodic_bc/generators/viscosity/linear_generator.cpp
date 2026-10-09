@@ -11,8 +11,8 @@ using namespace Utils;
 using namespace WindInducedCurrents::Davies85::Parallel::NonPeriodicBC::Generators::Viscosity;
 
 LinearGenerator::LinearGenerator(
-    float ht,
-    float nus, float nut
+    double ht,
+    double nus, double nut
 ) {
     setHT(ht);
 
@@ -20,11 +20,11 @@ LinearGenerator::LinearGenerator(
     setNUT(nut);    
 }
 
-float LinearGenerator::getHT() {
+double LinearGenerator::getHT() {
     return ht;
 }
 
-void LinearGenerator::setHT(float val) {
+void LinearGenerator::setHT(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("HT should be > 0, but it is {}", val)
@@ -34,11 +34,11 @@ void LinearGenerator::setHT(float val) {
     ht = val;
 }
 
-float LinearGenerator::getNUS() {
+double LinearGenerator::getNUS() {
     return nus;
 }
 
-void LinearGenerator::setNUS(float val) {
+void LinearGenerator::setNUS(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("NUS should be > 0, but it is {}", val)
@@ -48,11 +48,11 @@ void LinearGenerator::setNUS(float val) {
     nus = val;
 }
 
-float LinearGenerator::getNUT() {
+double LinearGenerator::getNUT() {
     return nut;
 }
 
-void LinearGenerator::setNUT(float val) {
+void LinearGenerator::setNUT(double val) {
     if (val <= 0) {
         throw runtime_error(
             format("NUT should be > 0, but it is {}", val)
@@ -70,20 +70,20 @@ path LinearGenerator::createDirectory(path outDir) {
     );
 }
 
-vector<float> LinearGenerator::generateNU(
+vector<double> LinearGenerator::generateNU(
     int nx, int ny, int nz,
-    vector<float>& dz, vector<float>& h,
-    vector<float>& u10, vector<float>& v10,
-    vector<float>& qx, vector<float>& qy,
-    vector<float>& ua, vector<float>& va
+    vector<double>& dz, vector<double>& h,
+    vector<double>& u10, vector<double>& v10,
+    vector<double>& qx, vector<double>& qy,
+    vector<double>& ua, vector<double>& va
 ) {
-    vector<float> nu(nx * ny * nz);
+    vector<double> nu(nx * ny * nz);
 
     for (int i = 0; i < nx; i++) {
         for (int j = 0; j < ny; j++) {
             int p = j + i * ny;
 
-            float z = 0;
+            double z = 0;
 
             for (int k = 0; k < nz; k++) {
                 int id = k + p * nz;
